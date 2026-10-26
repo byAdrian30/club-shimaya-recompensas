@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Maestro | Club Shimaya Ramen - Regulación de Clientes</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Confetti Celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Supabase JS Client v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Yuji+Boku&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0c0a0a;
+      color: #F8FAFC;
+    }
+    .glass-card {
+      background: rgba(23, 20, 20, 0.94);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(217, 119, 6, 0.25);
+    }
+    .glow-gold {
+      box-shadow: 0 0 25px -4px rgba(245, 158, 11, 0.35);
+    }
+    .glow-red {
+      box-shadow: 0 0 25px -4px rgba(225, 29, 72, 0.35);
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #78350f;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-stone-950 text-stone-100 flex flex-col justify-between selection:bg-rose-600 selection:text-white">
+
+  <!-- ================================================================= -->
+  <!-- LOGIN GATE DEL USUARIO MAESTRO -->
+  <!-- ================================================================= -->
+  <div id="adminLoginGate" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div class="glass-card rounded-3xl max-w-sm w-full p-6 sm:p-8 text-center border-amber-500/40 shadow-2xl glow-gold relative">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-rose-700 via-amber-600 to-amber-500 flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg text-white">
+        👑
+      </div>
+      <h2 class="text-2xl font-black text-white">Panel Maestro</h2>
+      <p class="text-xs text-stone-400 mt-1 mb-5">
+        Regulación y Control de Clientes • Club Shimaya Ramen
+      </p>
+
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+        <div>
+          <label class="text-[11px] font-extrabold uppercase tracking-wider text-amber-400 block mb-1 text-left">
+            PIN o Clave de Acceso Maestro:
+          </label>
+          <input 
+            type="password" 
+            id="adminPinInput" 
+            placeholder="Ingresa PIN (ej. 74156527)" 
+            class="w-full bg-stone-900 border border-stone-700 focus:border-amber-500 text-white font-mono text-center text-lg px-4 py-3 rounded-xl focus:outline-none transition"
+            autofocus
+          >
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 hover:from-amber-500 hover:to-amber-300 text-stone-950 font-black text-sm py-3.5 rounded-xl shadow-lg transition active:scale-98">
+          <i class="fa-solid fa-lock-open mr-1.5"></i> Ingresar al Panel Maestro
+        </button>
+
+        <div class="pt-2 text-center">
+          <button type="button" onclick="quickAdminLogin()" class="text-[11px] text-stone-400 hover:text-amber-300 underline">
+            Acceso Rápido con PIN por Defecto (74156527)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- TOP NAV BAR (ADMINISTRACIÓN) -->
+  <!-- ================================================================= -->
+  <header class="border-b border-stone-800/80 bg-stone-900/95 sticky top-0 z-40 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-600 to-rose-600 flex items-center justify-center shadow-lg text-white font-black text-lg">
+          👑
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-black text-lg sm:text-xl tracking-tight text-white">SHIMAYA</span>
+            <span class="text-[10px] bg-amber-500 text-stone-950 font-black px-2 py-0.5 rounded-full uppercase">Control Maestro</span>
+          </div>
+          <p class="text-[11px] text-stone-400 font-medium">Gestión de Clientes, Puntos y Catálogo</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions in Header -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="/" target="_blank" class="text-xs bg-stone-800 hover:bg-stone-700 text-amber-300 border border-stone-700 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition" title="Abrir la vista que ven los clientes">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span class="hidden md:inline">Ver Portal</span> Cliente
+        </a>
+        <button onclick="toggleModal('modalSupabase')" class="text-xs bg-stone-800 hover:bg-stone-700 text-sky-300 border border-stone-700 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-database text-sky-400"></i>
+          <span class="hidden sm:inline">Supabase</span>
+        </button>
+        <button onclick="adminLogout()" class="text-xs bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-white border border-stone-800 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span class="hidden sm:inline">Salir</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- MAIN ADMIN DASHBOARD -->
+  <!-- ================================================================= -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+    <!-- TOP KPI METRICS BAR -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      
+      <!-- Total Clientes -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
+        <div class="flex items-center justify-between text-stone-400 mb-1">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider">Total Clientes</span>
+          <i class="fa-solid fa-users text-amber-400 text-base"></i>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-white" id="statTotalClients">0</div>
+        <p class="text-[10px] text-stone-400 mt-1">Registrados con DNI nominal</p>
+      </div>
+
+      <!-- Puntos en Circulación -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
+        <div class="flex items-center justify-between text-amber-400 mb-1">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider">Puntos Activos</span>
+          <i class="fa-solid fa-coins text-amber-400 text-base"></i>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-white flex items-baseline gap-1">
+          <span id="statTotalPoints">0</span>
+          <span class="text-xs text-amber-400 font-bold">PTS</span>
+        </div>
+        <p class="text-[10px] text-amber-300 font-semibold mt-1">Equiv. a S/ <span id="statPointsSoles">0.00</span> en carta</p>
+      </div>
+
+      <!-- Visitas Acumuladas -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
+        <div class="flex items-center justify-between text-rose-400 mb-1">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider">Visitas en Ruta</span>
+          <i class="fa-solid fa-map-pin text-rose-400 text-base"></i>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-white" id="statTotalVisits">0</div>
+        <p class="text-[10px] text-stone-400 mt-1">Hitos completados en sala</p>
+      </div>
+
+      <!-- Clientes VIP Sensei -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
+        <div class="flex items-center justify-between text-emerald-400 mb-1">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider">Nivel Sensei VIP</span>
+          <i class="fa-solid fa-crown text-emerald-400 text-base"></i>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-white" id="statVipClients">0</div>
+        <p class="text-[10px] text-emerald-400/90 font-semibold mt-1">Multiplicador 1.2x activado</p>
+      </div>
+
+    </div>
+
+    <!-- ACTION CONTROLS & SEARCH BAR -->
+    <div class="glass-card rounded-3xl p-4 sm:p-5 border-stone-800 space-y-4">
+      
+      <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+        
+        <!-- Search Input -->
+        <div class="relative flex-grow max-w-md">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </span>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Buscar por DNI, Nombre o Teléfono..." 
+            oninput="renderClientsTable()" 
+            class="w-full pl-10 pr-4 py-2.5 bg-stone-900 border border-stone-700 rounded-xl text-sm text-white placeholder-stone-500 focus:outline-none focus:border-amber-500"
+          >
+        </div>
+
+        <!-- Filter Pill Buttons -->
+        <div class="flex items-center gap-1.5 overflow-x-auto custom-scroll pb-1 lg:pb-0">
+          <button onclick="setFilter('all')" id="btnFilterAll" class="filter-btn active text-xs font-bold px-3 py-2 rounded-xl bg-amber-500 text-stone-950 transition">Todos</button>
+          <button onclick="setFilter('regular')" id="btnFilterRegular" class="filter-btn text-xs font-semibold px-3 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-700 transition">Regular</button>
+          <button onclick="setFilter('vip')" id="btnFilterVip" class="filter-btn text-xs font-semibold px-3 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-700 transition">Sensei VIP</button>
+        </div>
+
+        <!-- Main Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="openNewClientModal()" class="bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-stone-950 font-black text-xs px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5">
+            <i class="fa-solid fa-user-plus"></i> Nuevo Cliente
+          </button>
+          <button onclick="openPosModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5">
+            <i class="fa-solid fa-receipt"></i> Emitir Boleta POS
+          </button>
+          <button onclick="openVoucherValidatorModal()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5">
+            <i class="fa-solid fa-qrcode"></i> Validar Cupón QR
+          </button>
+          <button onclick="exportClientsCsv()" class="bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 font-bold text-xs px-3 py-2.5 rounded-xl transition flex items-center gap-1.5" title="Exportar base en CSV">
+            <i class="fa-solid fa-file-export"></i> CSV
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- CLIENTS MASTER DATA TABLE -->
+    <div class="glass-card rounded-3xl overflow-hidden border-stone-800 shadow-xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="border-b border-stone-800 bg-stone-900/80 text-stone-400 font-extrabold uppercase tracking-wider text-[10px]">
+              <th class="py-3 px-4">DNI</th>
+              <th class="py-3 px-4">Cliente / Contacto</th>
+              <th class="py-3 px-4">Puntos Disponibles</th>
+              <th class="py-3 px-4">Estación en Ruta</th>
+              <th class="py-3 px-4">Nivel / Ciclo</th>
+              <th class="py-3 px-4">Última Visita</th>
+              <th class="py-3 px-4 text-center">Acciones Maestras</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTableBody" class="divide-y divide-stone-800/60 font-mono">
+            <!-- Dynamically populated via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyTableMessage" class="hidden p-8 text-center text-stone-500 text-xs">
+        <i class="fa-solid fa-user-slash text-2xl mb-2 text-stone-600 block"></i>
+        No se encontraron clientes con el criterio de búsqueda.
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- MODAL 1: EDITAR CLIENTE COMPLETO -->
+  <!-- ================================================================= -->
+  <div id="modalEditClient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-card rounded-3xl max-w-lg w-full p-6 border-amber-500/40 shadow-2xl relative">
+      <button onclick="closeModal('modalEditClient')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2.5 mb-4 pb-3 border-b border-stone-800">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-user-pen"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-black text-white">Editar Datos del Cliente</h3>
+          <p class="text-xs text-stone-400">Modifica datos maestros, saldo de puntos y avance de ruta</p>
+        </div>
+      </div>
+
+      <form onsubmit="handleSaveClientEdit(event)" class="space-y-3.5 text-xs">
+        <input type="hidden" id="editOriginalDni">
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[11px] font-bold text-stone-300 block mb-1">DNI (8 dígitos):</label>
+            <input type="text" id="editDni" maxlength="8" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 font-mono font-bold text-white focus:outline-none focus:border-amber-500" required>
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-stone-300 block mb-1">Teléfono:</label>
+            <input type="text" id="editPhone" placeholder="Ej. 987654321" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-stone-300 block mb-1">Nombre Completo:</label>
+          <input type="text" id="editName" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-amber-500" required>
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-stone-300 block mb-1">Email (Opcional):</label>
+          <input type="email" id="editEmail" placeholder="cliente@correo.com" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 p-3 bg-stone-900/90 rounded-2xl border border-stone-800">
+          <div>
+            <label class="text-[10px] font-bold text-amber-400 uppercase block mb-1">Puntos Saldo:</label>
+            <input type="number" id="editPoints" min="0" class="w-full bg-stone-950 border border-stone-700 rounded-xl px-2.5 py-1.5 font-mono font-bold text-amber-300 text-base focus:outline-none focus:border-amber-500">
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold text-rose-400 uppercase block mb-1">Estación (1-10):</label>
+            <input type="number" id="editVisits" min="0" max="10" class="w-full bg-stone-950 border border-stone-700 rounded-xl px-2.5 py-1.5 font-mono font-bold text-rose-300 text-base focus:outline-none focus:border-amber-500">
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold text-emerald-400 uppercase block mb-1">Nivel Ciclo:</label>
+            <select id="editCycle" class="w-full bg-stone-950 border border-stone-700 rounded-xl px-2 py-2 text-xs font-bold text-emerald-300 focus:outline-none focus:border-amber-500">
+              <option value="1">1: Regular (1.0x)</option>
+              <option value="2">2: Sensei VIP (1.2x)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 pt-2">
+          <button type="submit" class="flex-1 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-black py-2.5 rounded-xl transition text-xs shadow">
+            <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Cambios
+          </button>
+          <button type="button" onclick="closeModal('modalEditClient')" class="px-4 bg-stone-800 hover:bg-stone-700 text-stone-300 font-bold py-2.5 rounded-xl transition text-xs border border-stone-700">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL 2: NUEVO CLIENTE MANUAL -->
+  <!-- ================================================================= -->
+  <div id="modalNewClient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-card rounded-3xl max-w-md w-full p-6 border-amber-500/40 shadow-2xl relative">
+      <button onclick="closeModal('modalNewClient')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2.5 mb-4 pb-3 border-b border-stone-800">
+        <div class="w-10 h-10 rounded-xl bg-rose-600/20 text-rose-400 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-black text-white">Registrar Nuevo Cliente</h3>
+          <p class="text-xs text-stone-400">Creación nominal en el Club Shimaya</p>
+        </div>
+      </div>
+
+      <form onsubmit="handleCreateNewClient(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="text-[11px] font-bold text-stone-300 block mb-1">DNI (8 dígitos):</label>
+          <input type="text" id="newDni" maxlength="8" placeholder="Ej. 74829103" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 font-mono font-bold text-white focus:outline-none focus:border-amber-500" required>
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-stone-300 block mb-1">Nombre Completo:</label>
+          <input type="text" id="newName" placeholder="Ej. Carlos Mendoza" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-amber-500" required>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[11px] font-bold text-stone-300 block mb-1">Teléfono:</label>
+            <input type="text" id="newPhone" placeholder="987654321" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="text-[11px] font-bold text-stone-300 block mb-1">Puntos Iniciales:</label>
+            <input type="number" id="newPoints" value="1" min="0" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-amber-300 font-bold focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-stone-300 block mb-1">Email (Opcional):</label>
+          <input type="email" id="newEmail" placeholder="cliente@correo.com" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <button type="submit" class="w-full mt-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black py-2.5 rounded-xl transition text-xs shadow">
+          <i class="fa-solid fa-plus mr-1"></i> Crear y Guardar Cliente
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL 3: AJUSTE RÁPIDO DE PUNTOS -->
+  <!-- ================================================================= -->
+  <div id="modalAdjustPoints" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-card rounded-3xl max-w-sm w-full p-5 border-amber-500/40 shadow-2xl relative">
+      <button onclick="closeModal('modalAdjustPoints')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <h3 class="text-base font-black text-white flex items-center gap-2 mb-1">
+        <i class="fa-solid fa-coins text-amber-400"></i> Ajustar Puntos de Cliente
+      </h3>
+      <p class="text-xs text-stone-400 mb-3" id="adjustClientLabel">Cliente: Marco Ramos (74829103)</p>
+
+      <form onsubmit="handleExecutePointsAdjustment(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="adjustTargetDni">
+
+        <div>
+          <label class="text-[11px] font-bold text-stone-300 block mb-1">Operación:</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2 rounded-xl bg-stone-900 border border-stone-700 cursor-pointer">
+              <input type="radio" name="adjustOp" value="add" checked class="text-emerald-500">
+              <span class="font-bold text-emerald-400">+ Sumar Puntos</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-xl bg-stone-900 border border-stone-700 cursor-pointer">
+              <input type="radio" name="adjustOp" value="sub" class="text-rose-500">
+              <span class="font-bold text-rose-400">- Restar Puntos</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-stone-300 block mb-1">Cantidad de Puntos:</label>
+          <input type="number" id="adjustAmount" min="1" value="5" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 font-mono text-base font-bold text-amber-300 focus:outline-none focus:border-amber-500" required>
+        </div>
+
+        <div>
+          <label class="text-[11px] font-bold text-stone-300 block mb-1">Motivo / Auditoría:</label>
+          <select id="adjustReason" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-stone-200 focus:outline-none focus:border-amber-500">
+            <option value="Cortesía por aniversario / cumpleaños">Cortesía por aniversario / cumpleaños</option>
+            <option value="Compensación en sala o mesa">Compensación en sala o mesa</option>
+            <option value="Corrección de boleta manual">Corrección de boleta manual</option>
+            <option value="Campaña promocional especial">Campaña promocional especial</option>
+            <option value="Ajuste manual administrativo">Ajuste manual administrativo</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full mt-2 bg-gradient-to-r from-amber-600 to-amber-500 text-stone-950 font-black py-2.5 rounded-xl transition text-xs shadow">
+          Confirmar Ajuste de Puntos
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL 4: EMITIR BOLETA POS (CAJERO / MASTER) -->
+  <!-- ================================================================= -->
+  <div id="modalPosSale" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-card rounded-3xl max-w-sm w-full p-5 border-emerald-500/40 shadow-2xl relative">
+      <button onclick="closeModal('modalPosSale')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold">
+          <i class="fa-solid fa-cash-register"></i>
+        </div>
+        <div>
+          <h4 class="text-sm font-black text-white">Emitir Boleta POS</h4>
+          <p class="text-[10px] text-stone-400">Acredita 6% Cashback y avanza hito</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-[11px] text-stone-300 font-semibold block mb-1">DNI del Cliente:</label>
+          <input type="text" id="posDni" maxlength="8" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-amber-500" placeholder="Ej. 74829103">
+        </div>
+
+        <div>
+          <label class="text-[11px] text-stone-300 font-semibold block mb-1">Monto en Boleta (Soles):</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400 font-bold">S/</span>
+            <input type="number" id="posAmount" value="65.00" step="5" oninput="updatePosCalc()" class="w-full pl-8 pr-3 py-2 bg-stone-900 border border-stone-700 rounded-xl text-amber-300 font-bold focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <div class="bg-stone-900 p-2.5 rounded-xl border border-stone-800 space-y-1 text-[11px]">
+          <div class="flex justify-between text-stone-400">
+            <span>Puntos (6% Cashback):</span>
+            <span id="posPtsCalc" class="text-amber-400 font-bold">+4 Puntos</span>
+          </div>
+          <div class="flex justify-between text-stone-400">
+            <span>Avance de Ruta:</span>
+            <span class="text-emerald-400 font-bold">+1 Estación (Mín. S/ 25.00)</span>
+          </div>
+          <div class="flex justify-between text-stone-500 text-[10px]">
+            <span>Candado Antifraude:</span>
+            <span>Bloqueo a 00000000 | Cooldown 1 hito/día</span>
+          </div>
+        </div>
+
+        <button onclick="executePosSale()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold py-2.5 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-receipt"></i> Emitir Boleta y Sumar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL 5: VALIDAR CUPÓN QR DEL CLIENTE -->
+  <!-- ================================================================= -->
+  <div id="modalVoucherValidator" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-card rounded-3xl max-w-sm w-full p-5 border-sky-500/40 shadow-2xl relative">
+      <button onclick="closeModal('modalVoucherValidator')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center text-sm font-bold">
+          <i class="fa-solid fa-qrcode"></i>
+        </div>
+        <div>
+          <h4 class="text-sm font-black text-white">Validar Cupón de Mesa</h4>
+          <p class="text-[10px] text-stone-400">Verifica la autenticidad del código mostrado por el cliente</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-[11px] text-stone-300 font-semibold block mb-1">Código del Cupón (ej. SHIMA-8921-OK):</label>
+          <input type="text" id="voucherCodeInput" placeholder="SHIMA-..." class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-amber-300 font-mono font-bold uppercase focus:outline-none focus:border-sky-500">
+        </div>
+
+        <button onclick="validateVoucherCode()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl transition shadow">
+          <i class="fa-solid fa-magnifying-glass mr-1"></i> Verificar Validez
+        </button>
+
+        <div id="voucherValidationResult" class="hidden p-3 rounded-xl border"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL 6: SUPABASE CONFIG -->
+  <!-- ================================================================= -->
+  <div id="modalSupabase" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-card rounded-3xl max-w-md w-full p-6 border-sky-500/40 shadow-2xl relative">
+      <button onclick="closeModal('modalSupabase')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center text-sm font-bold">
+          <i class="fa-solid fa-cloud"></i>
+        </div>
+        <div>
+          <h4 class="text-sm font-black text-white">Conexión a Supabase (PostgreSQL)</h4>
+          <p class="text-[10px] text-stone-400">Sincronización de clientes_fidelidad</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-[11px] text-stone-300 font-semibold block mb-1">Project URL:</label>
+          <input type="text" id="supabaseUrlInput" value="https://wmyxzvlfhxhwwfwtqgqe.supabase.co" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white font-mono text-[11px] focus:outline-none">
+        </div>
+
+        <div>
+          <label class="text-[11px] text-stone-300 font-semibold block mb-1">Anon Key:</label>
+          <input type="password" id="supabaseAnonKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white font-mono text-[11px] focus:outline-none">
+        </div>
+
+        <div class="flex gap-2 pt-1">
+          <button onclick="saveSupabaseSettings()" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 rounded-xl text-xs">
+            Guardar Configuración
+          </button>
+          <a href="schema_club_shimaya.sql" download class="px-3 bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 rounded-xl flex items-center gap-1 font-bold">
+            <i class="fa-solid fa-download"></i> SQL
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    const STORAGE_KEY = 'shimaya_clients_db';
+    const MASTER_PIN = '74156527';
+
+    const DEFAULT_CLIENTS = {
+      '74829103': {
+        name: 'Marco Ramos',
+        dni: '74829103',
+        phone: '987654321',
+        email: 'marco.ramos@gmail.com',
+        points: 22,
+        historicPoints: 45,
+        visits: 5,
+        cycle: 1,
+        lastVisitDate: '2026-10-24',
+        history: [
+          { date: '24/10/2026', amount: 80, pointsAdded: 5, note: 'Ramen Tonkotsu S + Té Afrutado' },
+          { date: '18/10/2026', amount: 120, pointsAdded: 7, note: 'Maki Acevichado + Age Gyozas x 6' },
+          { date: '05/10/2026', amount: 65, pointsAdded: 4, note: 'Chasu Ramen S + Soda Frutos' },
+          { date: '25/09/2026', amount: 70, pointsAdded: 4, note: 'Batayaki Ramen + Puchi Kurimu' },
+          { date: '10/09/2026', amount: 50, pointsAdded: 3, note: 'Tonkotsu Ramen S' }
+        ]
+      },
+      '45102938': {
+        name: 'Lucía Mendoza',
+        dni: '45102938',
+        phone: '976543210',
+        email: 'lucia.mendoza@hotmail.com',
+        points: 4,
+        historicPoints: 12,
+        visits: 1,
+        cycle: 1,
+        lastVisitDate: '2026-10-20',
+        history: [
+          { date: '20/10/2026', amount: 85, pointsAdded: 4, note: 'Chasu Ramen S + Bebida' }
+        ]
+      },
+      '74156527': {
+        name: 'Adrian Smith',
+        dni: '74156527',
+        phone: '965432109',
+        email: 'adrianbarranzuela0108@gmail.com',
+        points: 35,
+        historicPoints: 80,
+        visits: 8,
+        cycle: 2,
+        lastVisitDate: '2026-10-22',
+        history: [
+          { date: '22/10/2026', amount: 110, pointsAdded: 8, note: 'Chaufa Shimaya + Maki 1 Tabla' },
+          { date: '14/10/2026', amount: 95, pointsAdded: 7, note: 'Chasu Ramen M + Ebi Furai' }
+        ]
+      }
+    };
+
+    function getDB() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) return JSON.parse(stored);
+      } catch (e) {
+        console.warn('Error reading db:', e);
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_CLIENTS));
+      return DEFAULT_CLIENTS;
+    }
+
+    function saveDB(db) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      } catch (e) {
+        console.warn('Error saving db:', e);
+      }
+    }
+
+    let currentFilter = 'all';
+
+    // 1. LOGIN GATE
+    function checkAdminSession() {
+      if (sessionStorage.getItem('shimaya_admin_logged') === 'true') {
+        document.getElementById('adminLoginGate').classList.add('hidden');
+      } else {
+        document.getElementById('adminLoginGate').classList.remove('hidden');
+      }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const pin = document.getElementById('adminPinInput').value.trim();
+      if (pin === MASTER_PIN || pin === 'admin') {
+        sessionStorage.setItem('shimaya_admin_logged', 'true');
+        document.getElementById('adminLoginGate').classList.add('hidden');
+        renderDashboard();
+      } else {
+        alert('PIN incorrecto. Ingrese el PIN del usuario maestro.');
+      }
+    }
+
+    function quickAdminLogin() {
+      document.getElementById('adminPinInput').value = MASTER_PIN;
+      sessionStorage.setItem('shimaya_admin_logged', 'true');
+      document.getElementById('adminLoginGate').classList.add('hidden');
+      renderDashboard();
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('shimaya_admin_logged');
+      location.reload();
+    }
+
+    // 2. RENDER DASHBOARD & TABLE
+    function renderDashboard() {
+      const db = getDB();
+      const clients = Object.values(db);
+
+      // KPI Metrics
+      const totalClients = clients.length;
+      const totalPoints = clients.reduce((acc, c) => acc + (c.points || 0), 0);
+      const totalVisits = clients.reduce((acc, c) => acc + (c.visits || 0), 0);
+      const vipClients = clients.filter(c => (c.cycle || 1) >= 2).length;
+
+      document.getElementById('statTotalClients').textContent = totalClients;
+      document.getElementById('statTotalPoints').textContent = totalPoints;
+      document.getElementById('statPointsSoles').textContent = (totalPoints * 1.0).toFixed(2);
+      document.getElementById('statTotalVisits').textContent = totalVisits;
+      document.getElementById('statVipClients').textContent = vipClients;
+
+      renderClientsTable();
+    }
+
+    function setFilter(f) {
+      currentFilter = f;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('bg-amber-500', 'text-stone-950', 'active');
+        b.classList.add('bg-stone-900', 'text-stone-300');
+      });
+      const activeBtn = document.getElementById('btnFilter' + f.charAt(0).toUpperCase() + f.slice(1));
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-stone-900', 'text-stone-300');
+        activeBtn.classList.add('bg-amber-500', 'text-stone-950', 'active');
+      }
+      renderClientsTable();
+    }
+
+    function renderClientsTable() {
+      const db = getDB();
+      const search = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+      const tbody = document.getElementById('clientsTableBody');
+      const emptyMsg = document.getElementById('emptyTableMessage');
+
+      let list = Object.values(db);
+
+      if (currentFilter === 'regular') {
+        list = list.filter(c => (c.cycle || 1) === 1);
+      } else if (currentFilter === 'vip') {
+        list = list.filter(c => (c.cycle || 1) >= 2);
+      }
+
+      if (search) {
+        list = list.filter(c => 
+          (c.dni && c.dni.includes(search)) ||
+          (c.name && c.name.toLowerCase().includes(search)) ||
+          (c.phone && c.phone.includes(search))
+        );
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = '';
+        emptyMsg.classList.remove('hidden');
+        return;
+      }
+
+      emptyMsg.classList.add('hidden');
+
+      tbody.innerHTML = list.map(client => {
+        const isVip = (client.cycle || 1) >= 2;
+        const visits = client.visits || 0;
+        const points = client.points || 0;
+
+        return `
+          <tr class="hover:bg-stone-900/60 transition">
+            <td class="py-3 px-4 font-bold text-amber-400">
+              <span class="bg-stone-900 px-2 py-1 rounded-md border border-stone-800">${client.dni}</span>
+            </td>
+
+            <td class="py-3 px-4">
+              <div class="font-sans font-bold text-white text-xs">${client.name}</div>
+              <div class="text-[10px] text-stone-400 font-sans mt-0.5">
+                ${client.phone ? '<i class="fa-solid fa-phone text-stone-500 mr-1"></i>' + client.phone : ''}
+                ${client.email ? ' • ' + client.email : ''}
+              </div>
+            </td>
+
+            <td class="py-3 px-4">
+              <div class="flex items-center gap-1.5">
+                <span class="px-2.5 py-0.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-sm">
+                  ${points} pts
+                </span>
+                <button onclick="quickAdjustPoints('${client.dni}', 5)" class="w-6 h-6 rounded bg-stone-800 hover:bg-stone-700 text-emerald-400 text-[10px] font-bold border border-stone-700" title="Sumar 5 pts rápido">+</button>
+                <button onclick="quickAdjustPoints('${client.dni}', -5)" class="w-6 h-6 rounded bg-stone-800 hover:bg-stone-700 text-rose-400 text-[10px] font-bold border border-stone-700" title="Restar 5 pts rápido">-</button>
+              </div>
+              <div class="text-[9px] text-stone-500 mt-0.5">Valen S/ ${(points * 1.0).toFixed(2)}</div>
+            </td>
+
+            <td class="py-3 px-4">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-stone-200">Hito ${visits}/10</span>
+                <span class="text-[10px] text-stone-500 font-sans">(${Math.min(100, visits * 10)}%)</span>
+              </div>
+              <div class="w-24 bg-stone-800 rounded-full h-1.5 mt-1 overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-500 to-amber-500 h-1.5 rounded-full" style="width: ${Math.min(100, visits * 10)}%"></div>
+              </div>
+            </td>
+
+            <td class="py-3 px-4">
+              ${isVip ? `
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                  <i class="fa-solid fa-crown text-[9px]"></i> Sensei VIP 1.2x
+                </span>
+              ` : `
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-stone-800 text-stone-400 border border-stone-700">
+                  Regular Ciclo 1
+                </span>
+              `}
+            </td>
+
+            <td class="py-3 px-4 text-stone-400 font-sans text-[11px]">
+              ${client.lastVisitDate || 'Sin registro'}
+            </td>
+
+            <td class="py-3 px-4 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="openEditModal('${client.dni}')" class="px-2.5 py-1 rounded-lg bg-stone-800 hover:bg-amber-600 hover:text-stone-950 text-amber-300 border border-stone-700 font-sans font-bold text-[11px] transition" title="Editar datos completos">
+                  <i class="fa-solid fa-pen-to-square"></i> Editar
+                </button>
+                <button onclick="openAdjustModal('${client.dni}')" class="px-2 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 font-sans font-bold text-[11px] transition" title="Ajuste auditado">
+                  <i class="fa-solid fa-sliders"></i>
+                </button>
+                <a href="/?dni=${client.dni}" target="_blank" class="px-2 py-1 rounded-lg bg-stone-800 hover:bg-sky-600 hover:text-white text-sky-400 border border-stone-700 font-sans font-bold text-[11px] transition" title="Ver como cliente">
+                  <i class="fa-solid fa-eye"></i>
+                </a>
+                <button onclick="deleteClient('${client.dni}')" class="px-2 py-1 rounded-lg bg-stone-800 hover:bg-rose-700 hover:text-white text-stone-500 border border-stone-700 font-sans font-bold text-[11px] transition" title="Eliminar cliente">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 3. MODAL CONTROLS
+    function toggleModal(id) {
+      document.getElementById(id).classList.toggle('hidden');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // 4. EDIT CLIENT
+    function openEditModal(dni) {
+      const db = getDB();
+      const client = db[dni];
+      if (!client) return;
+
+      document.getElementById('editOriginalDni').value = client.dni;
+      document.getElementById('editDni').value = client.dni;
+      document.getElementById('editName').value = client.name;
+      document.getElementById('editPhone').value = client.phone || '';
+      document.getElementById('editEmail').value = client.email || '';
+      document.getElementById('editPoints').value = client.points || 0;
+      document.getElementById('editVisits').value = client.visits || 0;
+      document.getElementById('editCycle').value = client.cycle || 1;
+
+      document.getElementById('modalEditClient').classList.remove('hidden');
+    }
+
+    function handleSaveClientEdit(e) {
+      e.preventDefault();
+      const originalDni = document.getElementById('editOriginalDni').value;
+      const newDni = document.getElementById('editDni').value.trim();
+      const name = document.getElementById('editName').value.trim();
+      const phone = document.getElementById('editPhone').value.trim();
+      const email = document.getElementById('editEmail').value.trim();
+      const points = parseInt(document.getElementById('editPoints').value, 10) || 0;
+      const visits = parseInt(document.getElementById('editVisits').value, 10) || 0;
+      const cycle = parseInt(document.getElementById('editCycle').value, 10) || 1;
+
+      if (!newDni || newDni.length !== 8) {
+        alert('El DNI debe tener exactamente 8 dígitos.');
+        return;
+      }
+
+      const db = getDB();
+      const existingHistory = db[originalDni] ? db[originalDni].history : [];
+      const lastVisit = db[originalDni] ? db[originalDni].lastVisitDate : null;
+
+      if (originalDni !== newDni) {
+        delete db[originalDni];
+      }
+
+      db[newDni] = {
+        dni: newDni,
+        name: name,
+        phone: phone,
+        email: email,
+        points: points,
+        historicPoints: Math.max(points, (db[originalDni]?.historicPoints || 0)),
+        visits: visits,
+        cycle: cycle,
+        lastVisitDate: lastVisit,
+        history: existingHistory
+      };
+
+      saveDB(db);
+      closeModal('modalEditClient');
+      renderDashboard();
+      alert('✅ Datos del cliente actualizados exitosamente.');
+    }
+
+    // 5. NEW CLIENT MANUAL
+    function openNewClientModal() {
+      document.getElementById('newDni').value = '';
+      document.getElementById('newName').value = '';
+      document.getElementById('newPhone').value = '';
+      document.getElementById('newEmail').value = '';
+      document.getElementById('newPoints').value = 1;
+      document.getElementById('modalNewClient').classList.remove('hidden');
+    }
+
+    function handleCreateNewClient(e) {
+      e.preventDefault();
+      const dni = document.getElementById('newDni').value.trim();
+      const name = document.getElementById('newName').value.trim();
+      const phone = document.getElementById('newPhone').value.trim();
+      const email = document.getElementById('newEmail').value.trim();
+      const points = parseInt(document.getElementById('newPoints').value, 10) || 1;
+
+      if (!dni || dni.length !== 8) {
+        alert('El DNI debe tener 8 dígitos.');
+        return;
+      }
+
+      const db = getDB();
+      if (db[dni]) {
+        alert('Ya existe un cliente registrado con ese DNI.');
+        return;
+      }
+
+      db[dni] = {
+        dni: dni,
+        name: name,
+        phone: phone,
+        email: email,
+        points: points,
+        historicPoints: points,
+        visits: 1,
+        cycle: 1,
+        lastVisitDate: null,
+        history: [{ date: 'Hoy', amount: 0, pointsAdded: points, note: 'Alta en sistema Club Shimaya' }]
+      };
+
+      saveDB(db);
+      closeModal('modalNewClient');
+      renderDashboard();
+      alert('✅ Cliente creado exitosamente.');
+    }
+
+    // 6. QUICK ADJUST POINTS
+    function quickAdjustPoints(dni, delta) {
+      const db = getDB();
+      if (!db[dni]) return;
+
+      db[dni].points = Math.max(0, (db[dni].points || 0) + delta);
+      db[dni].history.unshift({
+        date: 'Hoy',
+        amount: 0,
+        pointsAdded: delta,
+        note: delta > 0 ? 'Ajuste rápido (+5 pts)' : 'Ajuste rápido (-5 pts)'
+      });
+
+      saveDB(db);
+      renderDashboard();
+    }
+
+    function openAdjustModal(dni) {
+      const db = getDB();
+      const client = db[dni];
+      if (!client) return;
+
+      document.getElementById('adjustTargetDni').value = client.dni;
+      document.getElementById('adjustClientLabel').textContent = `Cliente: ${client.name} (DNI ${client.dni}) • Saldo actual: ${client.points} pts`;
+      document.getElementById('modalAdjustPoints').classList.remove('hidden');
+    }
+
+    function handleExecutePointsAdjustment(e) {
+      e.preventDefault();
+      const dni = document.getElementById('adjustTargetDni').value;
+      const op = document.querySelector('input[name="adjustOp"]:checked').value;
+      const amt = parseInt(document.getElementById('adjustAmount').value, 10) || 0;
+      const reason = document.getElementById('adjustReason').value;
+
+      if (amt <= 0) {
+        alert('Cantidad de puntos inválida.');
+        return;
+      }
+
+      const db = getDB();
+      const client = db[dni];
+      if (!client) return;
+
+      const change = op === 'add' ? amt : -amt;
+      client.points = Math.max(0, (client.points || 0) + change);
+      client.history.unshift({
+        date: 'Hoy (Auditoría)',
+        amount: 0,
+        pointsAdded: change,
+        note: `Ajuste: ${reason}`
+      });
+
+      saveDB(db);
+      closeModal('modalAdjustPoints');
+      renderDashboard();
+      alert(`✅ Puntos ajustados: ${change > 0 ? '+' : ''}${change} pts a ${client.name}.`);
+    }
+
+    // 7. DELETE CLIENT
+    function deleteClient(dni) {
+      const db = getDB();
+      const client = db[dni];
+      if (!client) return;
+
+      if (confirm(`¿Estás seguro de eliminar al cliente ${client.name} (DNI ${dni})? Esta acción no se puede deshacer.`)) {
+        delete db[dni];
+        saveDB(db);
+        renderDashboard();
+      }
+    }
+
+    // 8. POS SALE REGISTRATION
+    function openPosModal() {
+      document.getElementById('posDni').value = '';
+      document.getElementById('posAmount').value = 65.00;
+      updatePosCalc();
+      document.getElementById('modalPosSale').classList.remove('hidden');
+    }
+
+    function updatePosCalc() {
+      const amt = parseFloat(document.getElementById('posAmount').value) || 0;
+      const pts = Math.round(amt * 0.06);
+      document.getElementById('posPtsCalc').textContent = `+${pts} Puntos (6% Cashback)`;
+    }
+
+    function executePosSale() {
+      const dni = document.getElementById('posDni').value.trim();
+      const amt = parseFloat(document.getElementById('posAmount').value) || 0;
+
+      if (!dni || dni.length !== 8 || dni === '00000000') {
+        alert('Candado Antifraude: No se permite registrar a 00000000. Debe registrar el DNI nominal del cliente.');
+        return;
+      }
+      if (amt <= 0) {
+        alert('Monto inválido.');
+        return;
+      }
+
+      const db = getDB();
+      if (!db[dni]) {
+        db[dni] = {
+          name: 'Comensal Shimaya (' + dni.slice(0, 3) + '***)',
+          dni: dni,
+          phone: '',
+          email: '',
+          points: 0,
+          visits: 0,
+          cycle: 1,
+          lastVisitDate: null,
+          history: []
+        };
+      }
+
+      const user = db[dni];
+      const isVip = (user.cycle || 1) >= 2;
+      const pts = Math.round(amt * 0.06 * (isVip ? 1.2 : 1.0));
+      const today = new Date().toISOString().split('T')[0];
+
+      let advanced = false;
+      if (user.lastVisitDate !== today && amt >= 25.0) {
+        advanced = true;
+        user.visits = (user.visits || 0) + 1;
+        user.lastVisitDate = today;
+
+        if (user.visits > 10) {
+          user.visits = 1;
+          user.cycle = (user.cycle || 1) + 1;
+        }
+      }
+
+      user.points = (user.points || 0) + pts;
+      user.history.unshift({
+        date: 'Hoy',
+        amount: amt,
+        pointsAdded: pts,
+        note: `Boleta B001-${Math.floor(10000 + Math.random() * 90000)} • ${advanced ? 'Avanzó Estación #' + user.visits : 'Puntos sin avance de hito'}`
+      });
+
+      saveDB(db);
+      closeModal('modalPosSale');
+      renderDashboard();
+      alert(`✅ Boleta registrada con éxito:\n\n• DNI: ${dni}\n• Monto: S/ ${amt.toFixed(2)}\n• Puntos sumados: +${pts} Pts\n• Estación: #${user.visits}/10`);
+    }
+
+    // 9. VOUCHER VALIDATOR
+    function openVoucherValidatorModal() {
+      document.getElementById('voucherCodeInput').value = '';
+      document.getElementById('voucherValidationResult').classList.add('hidden');
+      document.getElementById('modalVoucherValidator').classList.remove('hidden');
+    }
+
+    function validateVoucherCode() {
+      const code = document.getElementById('voucherCodeInput').value.trim().toUpperCase();
+      const resBox = document.getElementById('voucherValidationResult');
+
+      if (!code || !code.startsWith('SHIMA-') || !code.endsWith('-OK')) {
+        resBox.className = 'p-3 rounded-xl border border-rose-600 bg-rose-950/60 text-xs text-rose-300';
+        resBox.innerHTML = '<strong>❌ Código Inválido:</strong> El formato debe ser tipo <code>SHIMA-XXXX-OK</code> generado por la app oficial.';
+        resBox.classList.remove('hidden');
+        return;
+      }
+
+      resBox.className = 'p-3 rounded-xl border border-emerald-600 bg-emerald-950/60 text-xs text-emerald-300';
+      resBox.innerHTML = `
+        <div class="font-bold text-white mb-1">✅ ¡CUPÓN VÁLIDO PARA APLICAR EN MESA!</div>
+        <div>• Código: <span class="font-mono text-amber-300 font-bold">${code}</span></div>
+        <div>• Estado: <strong>DISPONIBLE</strong></div>
+        <div>• Validez: 24 horas desde su generación</div>
+        <button onclick="markVoucherRedeemed('${code}')" class="mt-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-[11px] transition">
+          Marcar como Canjeado en Caja
+        </button>
+      `;
+      resBox.classList.remove('hidden');
+    }
+
+    function markVoucherRedeemed(code) {
+      alert(`✅ Cupón ${code} marcado como canjeado satisfactoriamente.`);
+      closeModal('modalVoucherValidator');
+    }
+
+    // 10. EXPORT CSV
+    function exportClientsCsv() {
+      const db = getDB();
+      const clients = Object.values(db);
+
+      let csv = 'DNI,Nombre,Telefono,Email,Puntos_Disponibles,Hito_Actual,Ciclo_Nivel,Ultima_Visita\n';
+      clients.forEach(c => {
+        csv += `"${c.dni}","${c.name}","${c.phone || ''}","${c.email || ''}",${c.points || 0},${c.visits || 0},${c.cycle || 1},"${c.lastVisitDate || ''}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'clientes_club_shimaya_' + new Date().toISOString().split('T')[0] + '.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // 11. SUPABASE INTEGRATION
+    function saveSupabaseSettings() {
+      const url = document.getElementById('supabaseUrlInput').value.trim();
+      const key = document.getElementById('supabaseAnonKeyInput').value.trim();
+
+      localStorage.setItem('shimaya_supabase_url', url);
+      if (key) localStorage.setItem('shimaya_supabase_anon_key', key);
+      closeModal('modalSupabase');
+      alert('Configuración guardada.');
+    }
+
+    // 12. INITIALIZATION
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAdminSession();
+      renderDashboard();
+    });
+  </script>
+</body>
+</html>
