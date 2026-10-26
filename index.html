@@ -2,52 +2,54 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Club Shimaya Ramen | Pasaporte de Fidelización y Recompensas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Club Shimaya Ramen | Pasaporte de Fidelización</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Confetti Effects -->
+  <!-- Confetti Celebration -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- FontAwesome Icons -->
+  <!-- FontAwesome 6 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- QR Code Generator -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Plus Jakarta Sans & Yuji Boku -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Yuji+Boku&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Yuji+Boku&display=swap" rel="stylesheet">
+
   <style>
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #0c0a09;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #0b0909;
       color: #F8FAFC;
+      -webkit-tap-highlight-color: transparent;
     }
     .font-kanji {
       font-family: 'Yuji Boku', serif;
     }
     .glass-card {
-      background: rgba(23, 23, 23, 0.88);
-      backdrop-filter: blur(14px);
+      background: rgba(22, 19, 19, 0.92);
+      backdrop-filter: blur(16px);
       border: 1px solid rgba(217, 119, 6, 0.22);
     }
     .glow-gold {
-      box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 25px -4px rgba(245, 158, 11, 0.35);
     }
     .glow-red {
-      box-shadow: 0 0 25px -5px rgba(225, 29, 72, 0.35);
+      box-shadow: 0 0 25px -4px rgba(225, 29, 72, 0.35);
     }
     .step-node {
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .step-node:hover {
-      transform: translateY(-2px);
+    .step-node:active {
+      transform: scale(0.98);
     }
     .custom-scroll::-webkit-scrollbar {
-      height: 6px;
-      width: 6px;
+      height: 4px;
+      width: 4px;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
       background: #78350f;
@@ -55,20 +57,20 @@
     }
     @keyframes bob {
       0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-6px) rotate(1.5deg); }
+      50% { transform: translateY(-5px) rotate(1.5deg); }
     }
     .animate-mascot {
-      animation: bob 3.5s ease-in-out infinite;
+      animation: bob 3.2s ease-in-out infinite;
     }
     @keyframes pulse-ring {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.18); opacity: 0; }
-      100% { transform: scale(0.95); opacity: 0; }
+      0% { transform: scale(0.96); opacity: 0.9; }
+      50% { transform: scale(1.15); opacity: 0; }
+      100% { transform: scale(0.96); opacity: 0; }
     }
     .pulse-ring-effect::before {
       content: '';
       position: absolute;
-      inset: -5px;
+      inset: -4px;
       border-radius: 50%;
       border: 2px solid #f59e0b;
       animation: pulse-ring 2s infinite;
@@ -77,873 +79,517 @@
 </head>
 <body class="min-h-screen bg-stone-950 text-stone-100 flex flex-col justify-between selection:bg-rose-600 selection:text-white">
 
-  <!-- TOP BRAND NAV -->
-  <header class="border-b border-stone-800/80 bg-stone-900/90 sticky top-0 z-40 backdrop-blur-md">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="scrollToDniInput()">
-        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-700 via-amber-600 to-amber-400 flex items-center justify-center shadow-lg text-white font-bold text-xl">
+  <!-- ================================================================= -->
+  <!-- HEADER LIMPIO ORIENTADO AL CLIENTE -->
+  <!-- ================================================================= -->
+  <header class="border-b border-stone-800/80 bg-stone-950/95 sticky top-0 z-40 backdrop-blur-md">
+    <div class="max-w-md md:max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="showLoginView()">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-700 via-amber-600 to-amber-400 flex items-center justify-center shadow-lg text-white font-black text-xl">
           🍜
         </div>
         <div>
-          <div class="flex items-center space-x-2">
-            <span class="font-black text-xl tracking-tight text-white">SHIMAYA</span>
-            <span class="text-[10px] bg-rose-950 text-rose-400 font-bold px-2 py-0.5 rounded-full border border-rose-800/60 uppercase">Ramen Club</span>
+          <div class="flex items-center space-x-1.5">
+            <span class="font-black text-lg sm:text-xl tracking-tight text-white">SHIMAYA</span>
+            <span class="text-[9px] bg-rose-950 text-rose-400 font-extrabold px-2 py-0.5 rounded-full border border-rose-800/60 uppercase">Ramen Club</span>
           </div>
-          <p class="text-[11px] text-amber-500/90 font-medium">島屋 ラーメン • Pasaporte de Fidelización</p>
+          <p class="text-[10px] text-amber-500/90 font-medium">島屋 ラーメン • Pasaporte de Recompensas</p>
         </div>
       </div>
 
-      <!-- Header Action Controls -->
-      <div class="flex items-center space-x-2 sm:space-x-3">
-        <!-- Supabase Cloud Status Indicator -->
-        <button onclick="toggleSupabaseModal()" class="text-xs px-2.5 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 flex items-center gap-1.5 transition" title="Configurar conexión con Supabase">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" id="supabaseStatusDot"></span>
-          <span class="hidden md:inline font-mono text-[11px]" id="supabaseStatusText">Supabase Online</span>
-        </button>
-
-        <!-- Simulated POS Modal Trigger -->
-        <button onclick="toggleCashierModal()" class="text-xs font-bold bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 px-3.5 py-1.5 rounded-lg shadow-md transition flex items-center gap-1.5">
-          <i class="fa-solid fa-cash-register"></i> <span class="hidden sm:inline">Simular Boleta</span> POS
+      <!-- Quick Action: Change / Lookup DNI -->
+      <div class="flex items-center gap-2">
+        <button id="btnSwitchDniHeader" onclick="showLoginView()" class="hidden text-xs bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-700 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-arrows-rotate text-amber-400"></i>
+          <span class="hidden sm:inline">Cambiar</span> DNI
         </button>
       </div>
     </div>
   </header>
 
+  <!-- ================================================================= -->
   <!-- MAIN APP CONTAINER -->
-  <main class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  <!-- ================================================================= -->
+  <main class="flex-grow max-w-md md:max-w-4xl w-full mx-auto p-4 sm:p-6">
 
-    <!-- HERO DNI CONSULTATION CARD (BUSCADOR DE PUNTOS Y RECOMPENSAS POR DNI) -->
-    <section id="dniSearchSection" class="glass-card rounded-3xl p-5 sm:p-7 relative overflow-hidden shadow-2xl border-amber-500/30 glow-gold">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+    <!-- =============================================================== -->
+    <!-- VIEW 1: PANTALLA DE INGRESO / CONSULTA DNI (BIENVENIDA AL COMENSAL) -->
+    <!-- =============================================================== -->
+    <section id="view-login" class="space-y-6">
+      
+      <!-- Welcome Hero Card -->
+      <div class="glass-card rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden shadow-2xl border-amber-500/30 glow-gold">
         
-        <!-- Left: Friendly Storytelling & Mascot -->
-        <div class="flex items-center gap-4 text-center md:text-left">
-          <div class="relative flex-shrink-0">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-b from-stone-800 to-stone-900 border-2 border-amber-500/70 p-0.5 overflow-hidden shadow-xl">
-              <img src="shimayito_camino_ramen_1792974725553.jpg" alt="Shimayito" class="w-full h-full object-cover rounded-xl animate-mascot">
-            </div>
-            <span class="absolute -bottom-2 -right-1 bg-amber-500 text-stone-950 font-black text-[9px] px-2 py-0.5 rounded-full uppercase shadow">
-              Oficial
-            </span>
+        <!-- Animated Mascot Badge -->
+        <div class="relative inline-block mx-auto mb-4">
+          <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-b from-stone-800 to-stone-900 border-2 border-amber-500/70 p-1 overflow-hidden shadow-2xl glow-gold mx-auto">
+            <img src="shimayito_camino_ramen_1792974725553.jpg" alt="Shimayito" class="w-full h-full object-cover rounded-2xl animate-mascot">
           </div>
-          <div>
-            <h2 class="text-xl sm:text-2xl font-black text-white flex items-center justify-center md:justify-start gap-2">
-              <span>Consulta tu Pasaporte Shimaya</span>
-              <span class="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30 font-bold uppercase">6% Cashback</span>
-            </h2>
-            <p class="text-stone-300 text-xs sm:text-sm mt-1 max-w-xl">
-              Digita tu <strong>número de DNI</strong> para conocer tus puntos acumulados, tu avance en <em>El Camino de Shimayito</em> y qué platos puedes canjear hoy en mesa.
-            </p>
-          </div>
+          <span class="absolute -bottom-2 -right-1 bg-gradient-to-r from-amber-500 to-rose-600 text-stone-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase shadow">
+            ¡Hola!
+          </span>
         </div>
 
-        <!-- Right: DNI Input Form -->
-        <div class="w-full md:w-auto flex-shrink-0">
-          <div class="bg-stone-900/95 p-3 sm:p-4 rounded-2xl border border-stone-700/80 shadow-inner flex flex-col gap-2.5">
-            <label for="dniInput" class="text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-id-card"></i> Ingresa tu DNI (8 dígitos)
-            </label>
-            <div class="flex items-center gap-2">
-              <input 
-                type="text" 
-                id="dniInput" 
-                inputmode="numeric" 
-                pattern="[0-9]*" 
-                maxlength="8" 
-                placeholder="Ej. 74829103" 
-                value="74829103"
-                onkeypress="handleDniKey(event)" 
-                class="w-40 sm:w-48 bg-stone-950 border border-stone-700 focus:border-amber-500 text-white font-mono font-bold text-base px-3.5 py-2 rounded-xl focus:outline-none transition shadow-sm"
-              >
-              <button 
-                onclick="loginUser()" 
-                class="bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5 whitespace-nowrap">
-                <i class="fa-solid fa-magnifying-glass"></i> Consultar
-              </button>
-            </div>
-            
-            <!-- Quick Demo Profiles Pills -->
-            <div class="flex items-center gap-1.5 flex-wrap pt-1 border-t border-stone-800">
-              <span class="text-[10px] text-stone-500 font-semibold">Probar con:</span>
-              <button onclick="quickLogin('74829103')" class="text-[10px] bg-stone-800 hover:bg-stone-700 text-amber-300 font-mono px-2 py-0.5 rounded-md border border-stone-700">74829103 (Marco - 22 pts)</button>
-              <button onclick="quickLogin('45102938')" class="text-[10px] bg-stone-800 hover:bg-stone-700 text-stone-300 font-mono px-2 py-0.5 rounded-md border border-stone-700">45102938 (Lucía - 4 pts)</button>
-              <button onclick="quickLogin('74156527')" class="text-[10px] bg-stone-800 hover:bg-stone-700 text-emerald-300 font-mono px-2 py-0.5 rounded-md border border-stone-700">74156527 (Adrian - 35 pts)</button>
-            </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-white">¡Bienvenido al Club Shimaya!</h2>
+        <p class="text-stone-300 text-xs sm:text-sm mt-2 max-w-md mx-auto leading-relaxed">
+          Consulta tus <strong>puntos acumulados</strong>, tu avance en <em>El Camino de Shimayito</em> y qué platos puedes <strong>canjear gratis hoy en tu mesa</strong>.
+        </p>
+
+        <!-- DNI Search Input Form -->
+        <div class="mt-6 max-w-sm mx-auto bg-stone-900/95 p-4 rounded-2xl border border-stone-700/80 shadow-inner">
+          <label for="dniInput" class="text-[11px] font-extrabold uppercase tracking-wider text-amber-400 block mb-2">
+            <i class="fa-solid fa-id-card mr-1"></i> Digita tu número de DNI
+          </label>
+          
+          <div class="flex items-center gap-2">
+            <input 
+              type="text" 
+              id="dniInput" 
+              inputmode="numeric" 
+              pattern="[0-9]*" 
+              maxlength="8" 
+              placeholder="Ingresa 8 dígitos" 
+              value="74829103"
+              onkeypress="handleDniKey(event)" 
+              class="w-full bg-stone-950 border border-stone-700 focus:border-amber-500 text-white font-mono font-bold text-center text-lg px-4 py-3 rounded-xl focus:outline-none transition shadow-sm"
+            >
+          </div>
+
+          <button 
+            onclick="consultarDni()" 
+            class="w-full mt-3 bg-gradient-to-r from-rose-600 via-amber-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-stone-950 font-black text-sm py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-98">
+            <i class="fa-solid fa-magnifying-glass"></i> Ver Mis Puntos y Premios 🍜
+          </button>
+        </div>
+
+        <!-- Quick Demo Profiles Pills (Para probar al instante) -->
+        <div class="mt-5 pt-4 border-t border-stone-800/80 max-w-sm mx-auto">
+          <span class="text-[10px] text-stone-500 uppercase tracking-wider font-semibold block mb-2">
+            Perfiles de prueba en mesa:
+          </span>
+          <div class="flex flex-wrap items-center justify-center gap-1.5">
+            <button onclick="quickSelectDni('74829103')" class="text-[10px] bg-stone-900 hover:bg-stone-800 text-amber-300 font-mono px-2.5 py-1 rounded-lg border border-stone-700">Marco Ramos (22 pts)</button>
+            <button onclick="quickSelectDni('45102938')" class="text-[10px] bg-stone-900 hover:bg-stone-800 text-stone-300 font-mono px-2.5 py-1 rounded-lg border border-stone-700">Lucía Mendoza (4 pts)</button>
+            <button onclick="quickSelectDni('74156527')" class="text-[10px] bg-stone-900 hover:bg-stone-800 text-emerald-300 font-mono px-2.5 py-1 rounded-lg border border-stone-700">Adrian Smith (35 pts)</button>
           </div>
         </div>
 
       </div>
+
+      <!-- Quick 3 Steps Info Banner -->
+      <div class="grid grid-cols-3 gap-2 sm:gap-4 text-center">
+        <div class="glass-card rounded-2xl p-3 border-stone-800">
+          <div class="text-xl sm:text-2xl mb-1">🧾</div>
+          <h4 class="font-extrabold text-[11px] sm:text-xs text-white">1. Pide con DNI</h4>
+          <p class="text-[9px] sm:text-[10px] text-stone-400 mt-0.5">En cada boleta de consumo</p>
+        </div>
+        <div class="glass-card rounded-2xl p-3 border-stone-800">
+          <div class="text-xl sm:text-2xl mb-1">💰</div>
+          <h4 class="font-extrabold text-[11px] sm:text-xs text-white">2. Gana 6% Pts</h4>
+          <p class="text-[9px] sm:text-[10px] text-stone-400 mt-0.5">Cashback en cada visita</p>
+        </div>
+        <div class="glass-card rounded-2xl p-3 border-stone-800">
+          <div class="text-xl sm:text-2xl mb-1">🎁</div>
+          <h4 class="font-extrabold text-[11px] sm:text-xs text-white">3. Canjea en Mesa</h4>
+          <p class="text-[9px] sm:text-[10px] text-stone-400 mt-0.5">Gyozas, Makis o Ramen</p>
+        </div>
+      </div>
     </section>
 
-    <!-- CLIENT DASHBOARD WRAPPER -->
-    <div id="view-dashboard" class="space-y-6">
-
-      <!-- TOP USER SUMMARY CARDS -->
-      <div class="glass-card rounded-3xl p-5 sm:p-6 relative overflow-hidden shadow-xl border-stone-800">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-5 relative z-10">
+    <!-- =============================================================== -->
+    <!-- VIEW 2: DASHBOARD COMPLETO DEL CLIENTE (PUNTOS + CAMINITO + TIENDA) -->
+    <!-- =============================================================== -->
+    <section id="view-dashboard" class="hidden space-y-5">
+      
+      <!-- CLIENT HEADER BANNER -->
+      <div class="glass-card rounded-3xl p-5 sm:p-6 relative overflow-hidden shadow-xl border-amber-900/40">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
           
           <!-- User info -->
-          <div class="flex items-center gap-4 text-center md:text-left">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-700 to-amber-500 flex items-center justify-center text-2xl font-bold shadow-lg">
+          <div class="flex items-center gap-3.5 text-center sm:text-left">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-700 via-amber-600 to-amber-500 flex items-center justify-center text-2xl font-black shadow-lg flex-shrink-0">
               🥢
             </div>
             <div>
-              <div class="flex items-center gap-2 justify-center md:justify-start">
-                <h3 id="userName" class="text-xl sm:text-2xl font-black text-white">Marco Ramos</h3>
-                <span id="userBadge" class="bg-rose-950 text-rose-400 border border-rose-800/70 text-[10px] px-2.5 py-0.5 rounded-md font-bold uppercase tracking-wider">Cliente Frecuente</span>
+              <div class="flex items-center gap-2 justify-center sm:justify-start">
+                <h3 id="clientName" class="text-xl sm:text-2xl font-black text-white">Marco Ramos</h3>
+                <span id="clientBadge" class="bg-rose-950 text-rose-400 border border-rose-800/70 text-[9px] px-2 py-0.5 rounded-md font-extrabold uppercase">Socio Frecuente</span>
               </div>
               <p class="text-stone-400 text-xs mt-0.5">
-                DNI: <span id="userDni" class="font-mono text-stone-200 font-bold">74829103</span> • <span id="userCycleText">Ciclo 1 (Regular)</span>
+                DNI: <span id="clientDni" class="font-mono text-stone-200 font-bold">74829103</span> • <span id="clientCycleText">Ciclo 1 (Regular)</span>
               </p>
               <p class="text-xs text-amber-400 font-semibold mt-1">
-                <i class="fa-solid fa-fire text-rose-500 mr-1"></i> ¡Estás a solo <strong id="visitsRemainingText" class="text-white underline">1 visita</strong> de reclamar tu siguiente recompensa!
+                <i class="fa-solid fa-fire text-rose-500 mr-1"></i> <span id="clientNextHype">¡A solo 1 visita de reclamar tu siguiente plato gratis!</span>
               </p>
             </div>
           </div>
 
-          <!-- Counters: Points & Visits -->
-          <div class="flex items-center gap-3 w-full md:w-auto justify-center">
+          <!-- Puntos & Visitas Counter Cards -->
+          <div class="flex items-center gap-2.5 w-full sm:w-auto justify-center">
+            
             <!-- Points Box (6% Cashback) -->
-            <div class="bg-stone-900/95 border-2 border-amber-500/50 rounded-2xl px-5 py-3 text-center min-w-[140px] glow-gold">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400 flex items-center justify-center gap-1">
-                <i class="fa-solid fa-coins"></i> Saldo en Puntos
+            <div class="bg-stone-900/95 border-2 border-amber-500/60 rounded-2xl px-4 py-2.5 text-center min-w-[130px] glow-gold flex-1 sm:flex-none">
+              <span class="text-[9px] font-extrabold uppercase tracking-wider text-amber-400 flex items-center justify-center gap-1">
+                <i class="fa-solid fa-coins"></i> Saldo Puntos
               </span>
-              <div class="text-3xl font-black text-white mt-0.5 flex items-center justify-center gap-1">
-                <span id="userPoints">22</span>
+              <div class="text-2xl sm:text-3xl font-black text-white mt-0.5 flex items-center justify-center gap-1">
+                <span id="clientPoints">22</span>
                 <span class="text-xs text-amber-400 font-bold">PTS</span>
               </div>
-              <p class="text-[10px] text-amber-300 font-bold mt-0.5">Equiv. a S/ <span id="userSolesEquiv">22.00</span> en tienda</p>
+              <p class="text-[9px] text-amber-300 font-bold mt-0.5">Valen S/ <span id="clientSolesEquiv">22.00</span> en carta</p>
             </div>
 
             <!-- Visits Box (Caminito) -->
-            <div class="bg-stone-900/95 border-2 border-rose-700/50 rounded-2xl px-5 py-3 text-center min-w-[140px] glow-red">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400 flex items-center justify-center gap-1">
-                <i class="fa-solid fa-utensils"></i> Visitas en Ruta
+            <div class="bg-stone-900/95 border-2 border-rose-700/60 rounded-2xl px-4 py-2.5 text-center min-w-[130px] glow-red flex-1 sm:flex-none">
+              <span class="text-[9px] font-extrabold uppercase tracking-wider text-rose-400 flex items-center justify-center gap-1">
+                <i class="fa-solid fa-utensils"></i> Visitas
               </span>
-              <div class="text-3xl font-black text-white mt-0.5 flex items-center justify-center gap-1">
-                <span id="userVisits">5</span>
-                <span class="text-xs text-stone-400 font-medium" id="milestoneTargetText">/ 10 Hitos</span>
+              <div class="text-2xl sm:text-3xl font-black text-white mt-0.5 flex items-center justify-center gap-1">
+                <span id="clientVisits">5</span>
+                <span class="text-xs text-stone-400 font-medium">/ 10 Hitos</span>
               </div>
-              <p class="text-[10px] text-stone-400 mt-0.5" id="progressPercentageText">50% de la ruta</p>
+              <p class="text-[9px] text-stone-400 mt-0.5" id="clientProgressText">50% completado</p>
             </div>
+
           </div>
 
         </div>
 
-        <!-- Sub-bar: Change DNI & Info -->
-        <div class="mt-4 pt-3 border-t border-stone-800/80 flex flex-wrap items-center justify-between gap-3 text-xs text-stone-400">
-          <div class="flex items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-800 text-[11px]">
-              <i class="fa-solid fa-check"></i> Sistema de 6% Cashback Activo (S/ 100 = 6 Puntos)
-            </span>
+        <!-- Cashier / Flyer note -->
+        <div class="mt-4 pt-3 border-t border-stone-800/80 flex items-center justify-between text-[11px] text-stone-400">
+          <div class="flex items-center gap-1.5 text-emerald-400">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>6% Cashback activo en todas tus compras</span>
           </div>
-          <button onclick="scrollToDniInput()" class="text-amber-400 hover:text-amber-300 font-bold transition flex items-center gap-1">
-            <i class="fa-solid fa-arrows-rotate"></i> Consultar otro DNI
+          <button onclick="showLoginView()" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1">
+            <i class="fa-solid fa-arrow-left"></i> Consultar otro DNI
           </button>
         </div>
       </div>
 
-      <!-- MAIN NAVIGATION TABS -->
-      <div class="flex border-b border-stone-800 gap-1 sm:gap-2 overflow-x-auto justify-start sm:justify-center custom-scroll pb-1">
-        <button onclick="switchTab('tienda')" id="tab-tienda" class="px-4 py-3 text-xs sm:text-sm font-bold text-amber-400 border-b-2 border-amber-500 flex items-center gap-2 transition whitespace-nowrap">
-          <i class="fa-solid fa-store text-amber-400"></i>
+      <!-- CLIENT TABS (SOLO LO QUE LE INTERESA AL COMENSAL) -->
+      <div class="flex border-b border-stone-800 gap-1 overflow-x-auto custom-scroll pb-1">
+        <button onclick="switchTab('tienda')" id="tab-tienda" class="px-3.5 py-2.5 text-xs sm:text-sm font-black text-amber-400 border-b-2 border-amber-500 flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-gift text-amber-400"></i>
           <span>¿Qué comprar con mis Puntos?</span>
-          <span class="bg-rose-950 text-rose-300 text-[10px] font-black px-1.5 py-0.5 rounded-full border border-rose-800">Tienda</span>
+          <span class="bg-rose-950 text-rose-300 text-[9px] font-black px-1.5 py-0.5 rounded-full border border-rose-800">Tienda</span>
         </button>
-        <button onclick="switchTab('caminito')" id="tab-caminito" class="px-4 py-3 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-2 transition whitespace-nowrap">
+
+        <button onclick="switchTab('caminito')" id="tab-caminito" class="px-3.5 py-2.5 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-1.5 whitespace-nowrap transition">
           <i class="fa-solid fa-map-location-dot"></i>
           <span>El Caminito de Shimayito</span>
-          <span class="text-[10px] bg-stone-800 text-stone-400 px-1.5 py-0.5 rounded-full">10 Estaciones</span>
+          <span class="text-[9px] bg-stone-800 text-stone-400 px-1.5 py-0.5 rounded-full">10 Estaciones</span>
         </button>
-        <button onclick="switchTab('historial')" id="tab-historial" class="px-4 py-3 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-2 transition whitespace-nowrap">
+
+        <button onclick="switchTab('boletas')" id="tab-boletas" class="px-3.5 py-2.5 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-1.5 whitespace-nowrap transition">
           <i class="fa-solid fa-receipt"></i>
-          <span>Mis Boletas & Puntos</span>
+          <span>Mis Boletas & Cashback</span>
         </button>
-        <button onclick="switchTab('mecanica')" id="tab-mecanica" class="px-4 py-3 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-2 transition whitespace-nowrap">
-          <i class="fa-solid fa-route"></i>
+
+        <button onclick="switchTab('comofunciona')" id="tab-comofunciona" class="px-3.5 py-2.5 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-circle-question"></i>
           <span>¿Cómo Funciona?</span>
-        </button>
-        <button onclick="switchTab('flyers')" id="tab-flyers" class="px-4 py-3 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-2 transition whitespace-nowrap">
-          <i class="fa-solid fa-image"></i>
-          <span>Flyers & Storytelling</span>
-        </button>
-        <button onclick="switchTab('sql')" id="tab-sql" class="px-4 py-3 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-2 transition whitespace-nowrap">
-          <i class="fa-solid fa-database text-sky-400"></i>
-          <span>Supabase & Candados</span>
         </button>
       </div>
 
-      <!-- ================================================================= -->
-      <!-- TAB 1: TIENDA DE PUNTOS (¿QUÉ COMPRAR CON SUS PUNTOS?) -->
-      <!-- ================================================================= -->
-      <div id="content-tienda" class="space-y-6">
-        <div class="glass-card rounded-3xl p-5 sm:p-7">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b border-stone-800 gap-4">
+      <!-- =============================================================== -->
+      <!-- TAB CONTENT 1: TIENDA DE PUNTOS -->
+      <!-- =============================================================== -->
+      <div id="content-tienda" class="space-y-4">
+        <div class="glass-card rounded-3xl p-5 sm:p-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-800 gap-3">
             <div>
-              <div class="flex items-center gap-2">
-                <span class="text-2xl">🛒</span>
-                <h3 class="text-xl sm:text-2xl font-black text-white">Catálogo de Recompensas en Tienda</h3>
-              </div>
-              <p class="text-xs text-stone-400 mt-1 max-w-xl">
-                Ganas <strong>6% de Cashback</strong> en cada compra (ej. S/ 100 consumidos = 6 Puntos). Cada punto equivale a <strong>S/ 1.00</strong> de la carta oficial ID POS para canjear tus platos preferidos.
+              <h3 class="text-xl font-black text-white flex items-center gap-2">
+                <span>🛒 Canje de Platos con Puntos</span>
+              </h3>
+              <p class="text-xs text-stone-400 mt-0.5">
+                Cada punto vale <strong>S/ 1.00</strong> de la carta oficial. ¡Canjea tus favoritos cuando quieras!
               </p>
             </div>
             
-            <!-- Wallet balance card -->
-            <div class="bg-amber-500/10 border border-amber-500/30 px-4 py-2.5 rounded-2xl flex items-center gap-3 flex-shrink-0">
-              <i class="fa-solid fa-wallet text-amber-400 text-xl"></i>
-              <div>
-                <div class="text-[10px] text-amber-300/90 uppercase font-bold tracking-wider">Tu Saldo Para Canje</div>
-                <div class="text-lg font-black text-white"><span id="storePointsBalance">22</span> Puntos</div>
-              </div>
+            <div class="bg-amber-500/10 border border-amber-500/30 px-3.5 py-1.5 rounded-xl flex items-center gap-2 self-start sm:self-auto">
+              <i class="fa-solid fa-wallet text-amber-400 text-sm"></i>
+              <span class="text-xs text-stone-300">Tienes: <strong class="text-amber-400 text-sm"><span id="storePointsAvailable">22</span> pts</strong></span>
             </div>
           </div>
 
-          <!-- Official Disclaimer Notice -->
-          <div class="mt-4 bg-stone-900/90 border border-stone-800 px-4 py-2.5 rounded-xl flex items-center gap-2.5 text-xs text-stone-400">
+          <!-- Disclaimer Legal -->
+          <div class="mt-3 bg-stone-900/90 border border-stone-800 px-3.5 py-2 rounded-xl flex items-center gap-2 text-[11px] text-stone-400">
             <i class="fa-solid fa-circle-info text-amber-400 flex-shrink-0"></i>
-            <span><em>Nota importante:</em> Todas las opciones de platos y recompensas son <strong>sugerencias preliminares sujetas a cambio</strong> por la administración de Shimaya Ramen.</span>
+            <span><em>Nota:</em> Todas las opciones de platos y recompensas son <strong>sugerencias preliminares sujetas a cambio</strong> por la administración de Shimaya Ramen.</span>
           </div>
 
-          <!-- Category Filter Buttons -->
-          <div class="flex items-center gap-2 overflow-x-auto py-4 custom-scroll">
-            <button onclick="filterCatalog('all')" class="cat-btn active px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-stone-950 shadow">Todos los Platos</button>
-            <button onclick="filterCatalog('entradas')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-800">Entradas & Gyozas</button>
-            <button onclick="filterCatalog('ramen')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-800">Tazones Ramen & Fondos</button>
-            <button onclick="filterCatalog('bebidas')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-800">Bebidas & Postres</button>
+          <!-- Category Filter Pills -->
+          <div class="flex items-center gap-1.5 overflow-x-auto py-3 custom-scroll">
+            <button onclick="filterStore('all')" class="store-filter active px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-stone-950 shadow">Todos</button>
+            <button onclick="filterStore('entradas')" class="store-filter px-3 py-1 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-800">Entradas & Gyozas</button>
+            <button onclick="filterStore('ramen')" class="store-filter px-3 py-1 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-800">Tazones Ramen & Fondos</button>
+            <button onclick="filterStore('bebidas')" class="store-filter px-3 py-1 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-800">Bebidas & Postres</button>
           </div>
 
-          <!-- Rewards Grid with Real ID POS items -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-2" id="rewardsGrid">
-            <!-- Dynamically populated via JS -->
+          <!-- Dynamic Products Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2" id="clientStoreGrid">
+            <!-- Injected via JavaScript -->
           </div>
+
         </div>
       </div>
 
-      <!-- ================================================================= -->
-      <!-- TAB 2: EL CAMINITO DE SHIMAYITO (10 ESTACIONES DE VISITAS) -->
-      <!-- ================================================================= -->
-      <div id="content-caminito" class="hidden space-y-6">
-        <div class="glass-card rounded-3xl p-5 sm:p-7">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-stone-800 gap-4">
-            <div class="flex items-center gap-3.5">
-              <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-amber-500/60 shadow-xl flex-shrink-0 glow-gold">
+      <!-- =============================================================== -->
+      <!-- TAB CONTENT 2: EL CAMINITO DE SHIMAYITO (10 ESTACIONES) -->
+      <!-- =============================================================== -->
+      <div id="content-caminito" class="hidden space-y-4">
+        <div class="glass-card rounded-3xl p-5 sm:p-6">
+          
+          <div class="flex items-center justify-between pb-4 border-b border-stone-800 gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl overflow-hidden border-2 border-amber-500/60 shadow-lg glow-gold flex-shrink-0">
                 <img src="shimayito_camino_ramen_1792974725553.jpg" alt="Shimayito" class="w-full h-full object-cover">
               </div>
               <div>
-                <div class="flex items-center gap-2">
-                  <span class="text-xl">🏮</span>
-                  <h3 class="text-xl font-black text-white">El Camino de Shimayito</h3>
-                  <span class="text-[10px] bg-rose-950 text-rose-300 font-bold px-2.5 py-0.5 rounded-full border border-rose-800 uppercase">10 Estaciones</span>
-                </div>
-                <p class="text-xs text-stone-400 mt-1">
-                  Acompaña a <b>Shimayito</b> paso a paso. Avanzas 1 estación con cada boleta emitida con tu DNI (consumo mín. S/ 25.00).
+                <h3 class="text-lg sm:text-xl font-black text-white">El Camino de Shimayito</h3>
+                <p class="text-xs text-stone-400 mt-0.5">
+                  Avanzas 1 estación con cada boleta emitida a tu DNI (mín. S/ 25.00).
                 </p>
               </div>
             </div>
-            
-            <div class="flex items-center gap-3 bg-stone-900/90 px-4 py-2.5 rounded-2xl border border-stone-800 flex-shrink-0">
-              <div class="text-right">
-                <div class="text-[10px] text-stone-400 uppercase font-bold tracking-wider">Avance en Ruta</div>
-                <div class="text-sm font-black text-emerald-400" id="caminitoProgressPct">50% completado</div>
-              </div>
-              <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center font-bold text-sm">
-                🦝
-              </div>
+
+            <div class="text-right">
+              <span class="text-xs font-black text-emerald-400 bg-emerald-950/80 border border-emerald-800 px-2.5 py-1 rounded-full">
+                <span id="caminitoBadgePct">50%</span> Ruta
+              </span>
             </div>
           </div>
 
-          <!-- Official Disclaimer Notice -->
-          <div class="mt-4 bg-stone-900/90 border border-stone-800 px-4 py-2.5 rounded-xl flex items-center gap-2.5 text-xs text-stone-400">
+          <!-- Disclaimer Legal -->
+          <div class="mt-3 bg-stone-900/90 border border-stone-800 px-3.5 py-2 rounded-xl flex items-center gap-2 text-[11px] text-stone-400">
             <i class="fa-solid fa-circle-info text-amber-400 flex-shrink-0"></i>
-            <span><em>Nota importante:</em> Los premios de cada estación son <strong>sugerencias preliminares sujetas a cambio</strong> por la administración de Shimaya Ramen.</span>
+            <span><em>Nota:</em> Los premios de estación son <strong>sugerencias preliminares sujetas a cambio</strong> por la administración de Shimaya Ramen.</span>
           </div>
 
-          <!-- Vertical Interactive Trail -->
-          <div class="mt-8 relative" id="caminitoContainer">
-            <!-- Dynamic Trail Elements generated via JS -->
+          <!-- Vertical Trail Container -->
+          <div class="mt-6 relative" id="clientTrailContainer">
+            <!-- Injected via JavaScript -->
           </div>
 
-          <!-- Motivational Card -->
-          <div class="mt-8 bg-gradient-to-r from-rose-950/70 via-stone-900 to-amber-950/60 p-5 rounded-2xl border border-rose-900/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-rose-600/20 text-rose-400 border border-rose-500/30 flex items-center justify-center text-2xl flex-shrink-0">
-                🎁
-              </div>
-              <div>
-                <h4 class="font-extrabold text-sm text-white">¿Cómo reclamar tu premio de estación?</h4>
-                <p class="text-xs text-stone-300 mt-0.5">
-                  Al llegar a una estación desbloqueada, pulsa sobre la recompensa para mostrar el código QR al mozo antes de que emita tu cuenta.
-                </p>
-              </div>
-            </div>
-            <button onclick="switchTab('tienda')" class="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-amber-300 font-bold text-xs rounded-xl border border-stone-700 whitespace-nowrap">
-              Ver Tienda de Puntos <i class="fa-solid fa-arrow-right ml-1"></i>
-            </button>
-          </div>
         </div>
       </div>
 
-      <!-- ================================================================= -->
-      <!-- TAB 3: MIS BOLETAS & PUNTOS (HISTORIAL) -->
-      <!-- ================================================================= -->
-      <div id="content-historial" class="hidden space-y-6">
-        <div class="glass-card rounded-3xl p-5 sm:p-7">
-          <div class="pb-5 border-b border-stone-800 flex items-center justify-between">
+      <!-- =============================================================== -->
+      <!-- TAB CONTENT 3: MIS BOLETAS & CASHBACK -->
+      <!-- =============================================================== -->
+      <div id="content-boletas" class="hidden space-y-4">
+        <div class="glass-card rounded-3xl p-5 sm:p-6">
+          <div class="pb-4 border-b border-stone-800 flex items-center justify-between">
             <div>
-              <h3 class="text-xl font-black text-white flex items-center gap-2">
-                <i class="fa-solid fa-receipt text-amber-400"></i> Historial de Boletas & Cashback
+              <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                <i class="fa-solid fa-receipt text-amber-400"></i> Tus Boletas Registradas
               </h3>
-              <p class="text-xs text-stone-400 mt-1">
-                Comprobantes registrados nominalmente a tu DNI. Cada boleta acredita tu 6% de cashback económico.
+              <p class="text-xs text-stone-400 mt-0.5">
+                Comprobantes emitidos con tu DNI. Cada uno acredita el 6% de cashback.
               </p>
             </div>
-            <span class="text-xs font-mono text-stone-400 bg-stone-900 px-3 py-1 rounded-lg border border-stone-800">
-              DNI: <strong class="text-white" id="historialDni">74829103</strong>
-            </span>
           </div>
 
-          <div class="mt-6 overflow-x-auto">
+          <div class="mt-4 overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead>
-                <tr class="border-b border-stone-800 text-stone-400 font-bold uppercase tracking-wider text-[10px]">
-                  <th class="py-3 px-3">Fecha</th>
-                  <th class="py-3 px-3">Detalle / Consumo</th>
-                  <th class="py-3 px-3 text-right">Monto Boleta</th>
-                  <th class="py-3 px-3 text-right">Cashback Ganado</th>
-                  <th class="py-3 px-3 text-center">Estado</th>
+                <tr class="border-b border-stone-800 text-stone-400 font-extrabold uppercase tracking-wider text-[10px]">
+                  <th class="py-2.5 px-3">Fecha</th>
+                  <th class="py-2.5 px-3">Consumo</th>
+                  <th class="py-2.5 px-3 text-right">Monto</th>
+                  <th class="py-2.5 px-3 text-right">Cashback</th>
                 </tr>
               </thead>
-              <tbody id="historialTableBody" class="divide-y divide-stone-800/60 font-mono">
-                <!-- Injected via JS -->
+              <tbody id="clientHistoryBody" class="divide-y divide-stone-800/60 font-mono">
+                <!-- Injected via JavaScript -->
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- ================================================================= -->
-      <!-- TAB 4: ¿CÓMO FUNCIONA? (RUTA DE LA MECÁNICA) -->
-      <!-- ================================================================= -->
-      <div id="content-mecanica" class="hidden space-y-6">
-        <div class="glass-card rounded-3xl p-6 sm:p-8 text-center">
-          <div class="pb-6 border-b border-stone-800 max-w-xl mx-auto">
-            <span class="text-xs bg-amber-500/20 text-amber-400 font-bold px-3 py-1 rounded-full uppercase border border-amber-500/30">
-              Dinámica de Atención & Fidelización
+      <!-- =============================================================== -->
+      <!-- TAB CONTENT 4: ¿CÓMO FUNCIONA? -->
+      <!-- =============================================================== -->
+      <div id="content-comofunciona" class="hidden space-y-4">
+        <div class="glass-card rounded-3xl p-5 sm:p-7 text-center">
+          <div class="max-w-md mx-auto">
+            <span class="text-xs bg-amber-500/20 text-amber-400 font-extrabold px-3 py-1 rounded-full uppercase border border-amber-500/30">
+              Fácil & Sin Tarjetas Físicas
             </span>
-            <h3 class="text-2xl font-black text-white mt-2">¿Cómo Funciona la Mecánica del Club Shimaya?</h3>
+            <h3 class="text-xl sm:text-2xl font-black text-white mt-2">¿Cómo Acumular y Canjear?</h3>
             <p class="text-xs text-stone-400 mt-1">
-              Un flujo simple y centrado en la atención diaria: emisión de boleta con DNI, avance de ruta y canje digital.
+              No tienes que instalar aplicaciones pesadas ni recordar contraseñas. Tu DNI es tu pasaporte.
             </p>
           </div>
 
-          <!-- 4 Steps Interactive Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-            <!-- Step 1 -->
-            <div class="bg-stone-900/90 rounded-2xl p-5 border border-stone-800 relative flex flex-col justify-between">
-              <span class="absolute -top-3 left-4 bg-amber-500 text-stone-950 font-black text-[11px] px-2.5 py-0.5 rounded-full">
-                PASO 1
-              </span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-6 text-left">
+            <div class="bg-stone-900/90 rounded-2xl p-4 border border-stone-800 flex flex-col justify-between">
               <div>
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl mb-3 mt-1">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-3">
                   🥢
                 </div>
-                <h4 class="font-extrabold text-white text-base">En Mesa (Consumo)</h4>
-                <p class="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                  El cliente pide la cuenta. El personal consulta con amabilidad: <br><i class="text-stone-300">"¿Acumula en el Club Shimaya? Bríndeme su DNI por favor"</i>.
+                <h4 class="font-extrabold text-white text-sm">1. Pide tu cuenta con DNI</h4>
+                <p class="text-xs text-stone-400 mt-1 leading-relaxed">
+                  Al pedir la boleta, dile al mozo tu número de DNI. El sistema lo registra al instante.
                 </p>
-              </div>
-              <div class="mt-4 pt-3 border-t border-stone-800/80 text-[11px] text-amber-400 font-semibold">
-                ✓ Toma solo 3 segundos
               </div>
             </div>
 
-            <!-- Step 2 -->
-            <div class="bg-stone-900/90 rounded-2xl p-5 border border-stone-800 relative flex flex-col justify-between">
-              <span class="absolute -top-3 left-4 bg-rose-600 text-white font-black text-[11px] px-2.5 py-0.5 rounded-full">
-                PASO 2
-              </span>
+            <div class="bg-stone-900/90 rounded-2xl p-4 border border-stone-800 flex flex-col justify-between">
               <div>
-                <div class="w-12 h-12 rounded-xl bg-rose-600/10 text-rose-400 flex items-center justify-center text-2xl mb-3 mt-1">
+                <div class="w-10 h-10 rounded-xl bg-rose-600/20 text-rose-400 flex items-center justify-center text-xl mb-3">
                   🧾
                 </div>
-                <h4 class="font-extrabold text-white text-base">En Caja (Boleta + Flyer)</h4>
-                <p class="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                  Caja emite la boleta con el DNI. Se entrega físicamente con el <b>flyer promocional de Shimayito</b> grapado a la cuenta con el código QR.
+                <h4 class="font-extrabold text-white text-sm">2. Gana 6% y Avanza</h4>
+                <p class="text-xs text-stone-400 mt-1 leading-relaxed">
+                  Por cada S/ 100 de compra ganas 6 Puntos (S/ 6.00 de saldo) y avanzas 1 estación en El Caminito.
                 </p>
-              </div>
-              <div class="mt-4 pt-3 border-t border-stone-800/80 text-[11px] text-emerald-400 font-semibold">
-                ✓ 100% legal con SUNAT
               </div>
             </div>
 
-            <!-- Step 3 -->
-            <div class="bg-stone-900/90 rounded-2xl p-5 border border-stone-800 relative flex flex-col justify-between">
-              <span class="absolute -top-3 left-4 bg-emerald-600 text-white font-black text-[11px] px-2.5 py-0.5 rounded-full">
-                PASO 3
-              </span>
+            <div class="bg-stone-900/90 rounded-2xl p-4 border border-stone-800 flex flex-col justify-between">
               <div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-600/10 text-emerald-400 flex items-center justify-center text-2xl mb-3 mt-1">
-                  📱
-                </div>
-                <h4 class="font-extrabold text-white text-base">En el Celular (Web)</h4>
-                <p class="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                  El cliente escanea el QR del flyer, digita su DNI y ve su avance en el <b>Caminito de Shimayito</b> y sus puntos de compra acumulados.
-                </p>
-              </div>
-              <div class="mt-4 pt-3 border-t border-stone-800/80 text-[11px] text-sky-400 font-semibold">
-                ✓ Sin recordar contraseñas
-              </div>
-            </div>
-
-            <!-- Step 4 -->
-            <div class="bg-stone-900/90 rounded-2xl p-5 border border-amber-500/40 relative flex flex-col justify-between glow-gold">
-              <span class="absolute -top-3 left-4 bg-gradient-to-r from-amber-500 to-rose-600 text-stone-950 font-black text-[11px] px-2.5 py-0.5 rounded-full">
-                PASO 4
-              </span>
-              <div>
-                <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl mb-3 mt-1">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center text-xl mb-3">
                   🍜
                 </div>
-                <h4 class="font-extrabold text-white text-base">El Retorno (Canje)</h4>
-                <p class="text-xs text-stone-400 mt-1.5 leading-relaxed">
-                  El comensal regresa a almorzar o cenar para redimir sus gyozas o ramen gratis mostrando su código QR en mesa.
+                <h4 class="font-extrabold text-white text-sm">3. Canjea en tu Mesa</h4>
+                <p class="text-xs text-stone-400 mt-1 leading-relaxed">
+                  Pulsa en tu plato favorito, genera tu cupón con código QR y muéstraselo al mozo al pagar.
                 </p>
               </div>
-              <div class="mt-4 pt-3 border-t border-stone-800/80 text-[11px] text-amber-400 font-black">
-                ✓ Incrementa visitas x2.3 veces
-              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ================================================================= -->
-      <!-- TAB 5: FLYERS & STORYTELLING -->
-      <!-- ================================================================= -->
-      <div id="content-flyers" class="hidden space-y-6">
-        <div class="glass-card rounded-3xl p-5 sm:p-7">
-          <div class="pb-5 border-b border-stone-800">
-            <span class="text-xs bg-amber-500/20 text-amber-400 font-bold px-3 py-1 rounded-full uppercase border border-amber-500/30">
-              Diseño Gráfico & Material Promocional
-            </span>
-            <h3 class="text-2xl font-black text-white mt-2">Material Impreso & Storytelling con Shimayito</h3>
-            <p class="text-xs text-stone-400 mt-1">
-              Imágenes oficiales de la campaña para flyers en mesa y pantallas móviles.
-            </p>
-          </div>
+    </section>
 
-          <div class="space-y-8 mt-6">
-            <!-- Render 01: Shimayito Oficial & Su DNI -->
-            <div class="bg-stone-900/90 rounded-2xl p-4 sm:p-6 border border-rose-600/40 glow-red">
-              <div class="flex items-center justify-between mb-3">
-                <h4 class="font-bold text-white text-base sm:text-lg flex items-center gap-2">
-                  <span class="text-rose-400">01.</span> Identidad Real de la Marca: Shimayito y su DNI Oficial
-                </h4>
-                <span class="text-xs text-rose-400 font-mono">Storytelling Oficial</span>
-              </div>
-              <p class="text-xs text-stone-400 mb-4">
-                El gorrioncito blanco y regordete con hachimaki del sol naciente. Shimaya ya posicionó en sus redes sociales el <b>"Documento de Identidad de Shimayito"</b>, convirtiendo el registro con DNI en un puente directo y carismático con la comunidad.
-              </p>
-              <div class="rounded-xl overflow-hidden border border-stone-700 shadow-2xl bg-black/40">
-                <img src="shimayito_oficial.png" alt="Shimayito Oficial y su DNI" class="w-full object-contain max-h-[500px]">
-              </div>
-            </div>
-
-            <!-- Render 02: 3D Shimayito en El Camino del Ramen -->
-            <div class="bg-stone-900/90 rounded-2xl p-4 sm:p-6 border border-amber-500/40 glow-gold">
-              <div class="flex items-center justify-between mb-3">
-                <h4 class="font-bold text-white text-base sm:text-lg flex items-center gap-2">
-                  <span class="text-amber-400">02.</span> Render 3D: Shimayito en "El Camino del Ramen"
-                </h4>
-                <span class="text-xs text-amber-400 font-mono">Estilo 3D Studio</span>
-              </div>
-              <p class="text-xs text-stone-400 mb-4">
-                Render 3D con la anatomía fiel de Shimayito recorriendo las 10 estaciones de la ruta (gyozas, makis, postres puchi kurimu y tazón de ramen cumbre con corona).
-              </p>
-              <div class="rounded-xl overflow-hidden border border-stone-700 shadow-2xl">
-                <img src="shimayito_camino_ramen_1792974725553.jpg" alt="Shimayito 3D en la Ruta de Recompensas" class="w-full object-cover max-h-[500px]">
-              </div>
-            </div>
-
-            <!-- Render 03: Flyer Impreso -->
-            <div class="bg-stone-900/90 rounded-2xl p-4 sm:p-6 border border-stone-800">
-              <div class="flex items-center justify-between mb-3">
-                <h4 class="font-bold text-white text-base sm:text-lg flex items-center gap-2">
-                  <span class="text-amber-500">03.</span> Flyer Impreso Adjunto a Boleta de Venta
-                </h4>
-                <span class="text-xs text-amber-400 font-mono">Formato Mesa / Caja</span>
-              </div>
-              <p class="text-xs text-stone-400 mb-4">
-                El cliente recibe este flyer físico junto a su boleta de compra. Comunica de un vistazo el camino de visitas con Shimayito, el 6% de cashback y el código QR para consultar su saldo con su DNI.
-              </p>
-              <div class="rounded-xl overflow-hidden border border-stone-700 shadow-2xl">
-                <img src="club_shimaya_flyer_mockup_1792973254841.jpg" alt="Flyer Promocional Club Shimaya" class="w-full object-cover max-h-[500px]">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ================================================================= -->
-      <!-- TAB 6: SUPABASE & CANDADOS ANTIFRAUDE -->
-      <!-- ================================================================= -->
-      <div id="content-sql" class="hidden space-y-6">
-        <div class="glass-card rounded-3xl p-5 sm:p-7">
-          <div class="pb-5 border-b border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <span class="text-xs bg-sky-500/20 text-sky-400 font-bold px-3 py-1 rounded-full uppercase border border-sky-500/30">
-                Arquitectura Técnica Supabase (PostgreSQL)
-              </span>
-              <h3 class="text-2xl font-black text-white mt-2">Base de Datos en Supabase & Protocolos Antifraude</h3>
-              <p class="text-xs text-stone-400 mt-1">
-                Estructura relacional con llaves primarias por DNI, comprobantes únicos y candados de integridad.
-              </p>
-            </div>
-            <a href="schema_club_shimaya.sql" download class="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-sky-400 text-xs font-bold rounded-xl border border-stone-700 flex items-center gap-2 transition flex-shrink-0">
-              <i class="fa-solid fa-file-code"></i> Descargar schema_club_shimaya.sql
-            </a>
-          </div>
-
-          <!-- Supabase Connection Live Panel -->
-          <div class="mt-6 bg-stone-900/90 rounded-2xl p-5 border border-sky-500/30">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h4 class="text-sm font-extrabold text-white flex items-center gap-2">
-                  <i class="fa-solid fa-cloud text-sky-400"></i> Proyecto Supabase: <span class="font-mono text-amber-400">wmyxzvlfhxhwwfwtqgqe</span> (SHIMAYA CHICLAYO)
-                </h4>
-                <p class="text-xs text-stone-400 mt-1">
-                  Endpoint oficial: <code class="text-stone-300 font-mono">https://wmyxzvlfhxhwwfwtqgqe.supabase.co</code>
-                </p>
-              </div>
-              <button onclick="toggleSupabaseModal()" class="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5 flex-shrink-0">
-                <i class="fa-solid fa-gear"></i> Configurar Llaves / Sincronización
-              </button>
-            </div>
-          </div>
-
-          <!-- 4 Core Relational Tables Cards -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-            <div class="bg-stone-900/90 rounded-2xl p-4 border border-stone-800">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-mono font-bold text-amber-400">01. clientes_fidelidad</span>
-                <span class="text-[10px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded border border-amber-800">dni PRIMARY KEY</span>
-              </div>
-              <p class="text-xs text-stone-400 mb-2">Llave única de 8 dígitos validada. Almacena saldo disponible, puntos históricos, estación actual (1-10) y nivel de ciclo.</p>
-              <div class="bg-black/60 p-2.5 rounded-xl font-mono text-[11px] text-stone-300">
-                dni (PK), nombre, telefono, puntos_disponibles, puntos_historicos, hito_actual, nivel_ciclo, fecha_ultima_visita
-              </div>
-            </div>
-
-            <div class="bg-stone-900/90 rounded-2xl p-4 border border-stone-800">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-mono font-bold text-emerald-400">02. catalogo_hitos_mapa</span>
-                <span class="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-800">numero_estacion PK</span>
-              </div>
-              <p class="text-xs text-stone-400 mb-2">Las 10 estaciones oficiales del sendero con platos reales de ID POS. Define el consumo mínimo (S/ 25.00) por estación.</p>
-              <div class="bg-black/60 p-2.5 rounded-xl font-mono text-[11px] text-stone-300">
-                numero_estacion (1..10), nombre_hito, premio_desbloqueado, categoria_pos, precio_carta_referencial, consumo_minimo_requerido
-              </div>
-            </div>
-
-            <div class="bg-stone-900/90 rounded-2xl p-4 border border-stone-800">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-mono font-bold text-rose-400">03. registro_visitas_boletas</span>
-                <span class="text-[10px] bg-rose-950 text-rose-300 px-2 py-0.5 rounded border border-rose-800">comprobante_id UNIQUE</span>
-              </div>
-              <p class="text-xs text-stone-400 mb-2">Candado transaccional. La serie y correlativo de boleta (ej. B001-00045821) impide duplicar puntos de un mismo ticket físico.</p>
-              <div class="bg-black/60 p-2.5 rounded-xl font-mono text-[11px] text-stone-300">
-                comprobante_id (PK), dni (FK), fecha_hora, monto_total, puntos_generados, avanzo_hito, estado
-              </div>
-            </div>
-
-            <div class="bg-stone-900/90 rounded-2xl p-4 border border-stone-800">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-mono font-bold text-sky-400">04. recompensas_cliente</span>
-                <span class="text-[10px] bg-sky-950 text-sky-300 px-2 py-0.5 rounded border border-sky-800">codigo_cupon UNIQUE</span>
-              </div>
-              <p class="text-xs text-stone-400 mb-2">Cupones generados con código QR y alfanumérico (ej. SHIMA-8921-OK). Traza vigencia y comprobante donde se canjeó.</p>
-              <div class="bg-black/60 p-2.5 rounded-xl font-mono text-[11px] text-stone-300">
-                id (UUID), codigo_cupon, dni (FK), tipo_origen, estado ('DISPONIBLE'/'CANJEADO'), comprobante_canje_id
-              </div>
-            </div>
-          </div>
-
-          <!-- Protocolos Antifraude Box -->
-          <div class="mt-6 bg-stone-950 p-5 rounded-2xl border border-stone-800">
-            <h4 class="text-sm font-extrabold text-white flex items-center gap-2 mb-3">
-              <i class="fa-solid fa-shield-halved text-rose-500"></i> Protocolos de Seguridad y Antifraude en Caja Implementados
-            </h4>
-            <div class="space-y-2.5 text-xs text-stone-300">
-              <div class="flex items-start gap-2">
-                <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
-                <div>
-                  <strong class="text-white">Asignación Nominal Obligatoria:</strong> El sistema bloquea boletas a "Clientes Varios" (00000000). El DNI debe ser digitado al momento de cobrar la mesa para evitar que cajeros acumulen tickets huérfanos.
-                </div>
-              </div>
-              <div class="flex items-start gap-2">
-                <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
-                <div>
-                  <strong class="text-white">Enfriamiento de Ruta (Cooldown Diario):</strong> Si un grupo divide la cuenta en 4 boletas el mismo día, se acreditan todos los puntos económicos pero el Mapa de Ruta solo avanza <b>máximo 1 hito por día calendario</b>.
-                </div>
-              </div>
-              <div class="flex items-start gap-2">
-                <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
-                <div>
-                  <strong class="text-white">Candado Transaccional Único:</strong> Cada comprobante se registra con su número de serie y correlativo (<code class="text-amber-400">Serie-Numero</code>), impidiendo que una misma boleta sea registrada más de una vez.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
   </main>
 
   <!-- ================================================================= -->
-  <!-- MODAL: SIMULADOR DE CAJA POS (CON REGLAS ANTIFRAUDE) -->
+  <!-- MODAL: CUPÓN QR GENERADO PARA MOSTRAR EN MESA AL MOZO -->
   <!-- ================================================================= -->
-  <div id="cashierModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-    <div class="glass-card rounded-3xl max-w-md w-full p-6 border-amber-500/40 shadow-2xl relative">
-      <button onclick="toggleCashierModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white">
+  <div id="voucherModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+    <div class="glass-card rounded-3xl max-w-sm w-full p-6 border-amber-500/50 shadow-2xl text-center relative glow-gold">
+      <button onclick="closeVoucherModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-rose-600 to-amber-500 text-white mx-auto flex items-center justify-center text-3xl mb-3 shadow-lg">
+        🎁
+      </div>
+
+      <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 font-extrabold px-2.5 py-0.5 rounded-full uppercase">
+        Cupón Válido
+      </span>
+
+      <h3 class="text-xl font-black text-white mt-2" id="voucherDishTitle">Age Gyozas x 6 und.</h3>
+      <p class="text-xs text-stone-400 mt-0.5 mb-3">Premio listo para canjear en mesa</p>
+
+      <!-- Real QR Code Container -->
+      <div class="bg-white p-3 rounded-2xl shadow-inner inline-block my-1 border-2 border-amber-500/30">
+        <div id="voucherQrCanvas" class="w-40 h-40 flex items-center justify-center mx-auto"></div>
+      </div>
+
+      <div class="bg-stone-900/95 p-2.5 rounded-xl border border-stone-800 my-2.5">
+        <span class="text-[10px] text-stone-500 uppercase tracking-wider font-semibold block">Código de Canje:</span>
+        <span class="text-base font-mono text-amber-400 font-black tracking-widest" id="voucherCodeString">SHIMA-8921-OK</span>
+      </div>
+
+      <p class="text-xs text-stone-300 mt-2 leading-relaxed">
+        👉 Muestra esta pantalla al mozo o cajero al pedir tu cuenta para aplicar tu recompensa.
+      </p>
+
+      <button onclick="closeVoucherModal()" class="mt-4 w-full bg-stone-800 hover:bg-stone-700 text-white font-bold py-2.5 rounded-xl text-xs transition border border-stone-700">
+        Entendido, cerrar
+      </button>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL DISCRETO PARA EL PERSONAL DE CAJA / MOZOS (REGISTRO POS) -->
+  <!-- ================================================================= -->
+  <div id="staffPosModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+    <div class="glass-card rounded-3xl max-w-sm w-full p-5 border-stone-700 shadow-2xl relative">
+      <button onclick="toggleStaffPosModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white">
         <i class="fa-solid fa-xmark text-lg"></i>
       </button>
 
-      <div class="flex items-center gap-2.5 mb-4">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm font-bold">
           <i class="fa-solid fa-cash-register"></i>
         </div>
         <div>
-          <h3 class="text-lg font-black text-white">Simulador de Boleta en Caja POS</h3>
-          <p class="text-xs text-stone-400">Emisión de ticket con 6% Cashback y avance de hito</p>
+          <h4 class="text-sm font-black text-white">Simulador Caja POS (Personal)</h4>
+          <p class="text-[10px] text-stone-400">Emisión con 6% Cashback y Candados</p>
         </div>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-3 text-xs">
         <div>
-          <label class="text-xs font-semibold text-stone-300 block mb-1">DNI del Cliente (Nominal Obligatorio):</label>
-          <input type="text" id="simDni" value="74829103" maxlength="8" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-amber-500">
+          <label class="text-[11px] text-stone-300 font-semibold block mb-1">DNI del Cliente (Nominal Obligatorio):</label>
+          <input type="text" id="staffDni" maxlength="8" value="74829103" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-amber-500">
         </div>
 
         <div>
-          <label class="text-xs font-semibold text-stone-300 block mb-1">Monto de Consumo en Boleta (Soles):</label>
+          <label class="text-[11px] text-stone-300 font-semibold block mb-1">Monto en Boleta (Soles):</label>
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400 text-sm font-bold">S/</span>
-            <input type="number" id="simAmount" value="65.00" step="5" oninput="updateSimCalculations()" class="w-full pl-9 pr-3 py-2 bg-stone-900 border border-stone-700 rounded-xl text-sm text-amber-300 font-bold focus:outline-none focus:border-amber-500">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-stone-400 font-bold">S/</span>
+            <input type="number" id="staffAmount" value="70.00" step="5" oninput="updateStaffSimCalc()" class="w-full pl-8 pr-3 py-2 bg-stone-900 border border-stone-700 rounded-xl text-amber-300 font-bold focus:outline-none focus:border-amber-500">
           </div>
         </div>
 
-        <div class="bg-stone-900/90 p-3 rounded-xl border border-stone-800 space-y-1.5 text-xs">
+        <div class="bg-stone-900 p-2.5 rounded-xl border border-stone-800 space-y-1 text-[11px]">
           <div class="flex justify-between text-stone-400">
-            <span>Regla de Puntos:</span>
-            <span class="text-stone-300">6% Cashback (S/ 100 = 6 Pts)</span>
+            <span>Puntos (6% Cashback):</span>
+            <span id="staffPtsCalc" class="text-amber-400 font-bold">+4 Puntos</span>
           </div>
-          <div class="flex justify-between font-bold text-amber-400">
-            <span>Puntos a sumar:</span>
-            <span id="simPointsCalc">+4 Puntos (6% Cashback)</span>
+          <div class="flex justify-between text-stone-400">
+            <span>Avance de Ruta:</span>
+            <span class="text-emerald-400 font-bold">+1 Estación (Mín. S/ 25.00)</span>
           </div>
-          <div class="flex justify-between font-bold text-emerald-400">
-            <span>Avance en Ruta:</span>
-            <span>+1 Estación (Mín. S/ 25.00)</span>
-          </div>
-          <div class="flex justify-between text-[10px] text-stone-500 pt-1 border-t border-stone-800">
+          <div class="flex justify-between text-stone-500 text-[10px]">
             <span>Regla Antifraude:</span>
-            <span>Cooldown máx. 1 hito/día | Bloqueo a 00000000</span>
+            <span>Máx 1 hito/día | No 00000000</span>
           </div>
         </div>
 
-        <button onclick="executeSimulatedSale()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-receipt"></i> Emitir Boleta y Sumar al Cliente
+        <button onclick="executeStaffSale()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold py-2.5 rounded-xl transition shadow flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-receipt"></i> Emitir Boleta y Sumar
         </button>
       </div>
     </div>
   </div>
 
   <!-- ================================================================= -->
-  <!-- MODAL: CANJE DE CUPÓN QR PARA MOSTRAR EN MESA -->
+  <!-- FOOTER LIMPIO Y DISCRETO -->
   <!-- ================================================================= -->
-  <div id="redeemModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-    <div class="glass-card rounded-3xl max-w-sm w-full p-6 border-rose-600/40 shadow-2xl text-center relative">
-      <button onclick="closeRedeemModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white">
-        <i class="fa-solid fa-xmark text-lg"></i>
-      </button>
-
-      <div class="w-16 h-16 rounded-full bg-rose-600/20 text-rose-400 mx-auto flex items-center justify-center text-3xl mb-3 border border-rose-500/40">
-        🍜
-      </div>
-
-      <h3 class="text-xl font-black text-white" id="modalRewardTitle">Age Gyozas x 6 und.</h3>
-      <p class="text-xs text-stone-400 mt-1 mb-3">¡Cupón generado con éxito!</p>
-
-      <!-- Real Scannable QR Box -->
-      <div class="bg-white p-3 rounded-2xl shadow-inner inline-block my-2">
-        <div id="qrcodeCanvas" class="w-40 h-40 flex items-center justify-center mx-auto"></div>
-      </div>
-
-      <div class="bg-stone-900 p-2.5 rounded-xl border border-stone-800 my-2">
-        <p class="text-[11px] font-mono text-amber-400 font-bold tracking-wider">CÓDIGO: <span id="voucherCodeText">SHIMA-8921-OK</span></p>
-      </div>
-
-      <p class="text-xs text-stone-300 mt-3 leading-relaxed">
-        Muestra este código al mozo al momento de pedir tu cuenta para aplicar tu recompensa.
-      </p>
-
-      <button onclick="closeRedeemModal()" class="mt-4 w-full bg-stone-800 hover:bg-stone-700 text-white font-bold py-2.5 rounded-xl text-xs transition border border-stone-700">
-        Listo, cerrar cupón
-      </button>
-    </div>
-  </div>
-
-  <!-- ================================================================= -->
-  <!-- MODAL: CONFIGURACIÓN SUPABASE -->
-  <!-- ================================================================= -->
-  <div id="supabaseModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-    <div class="glass-card rounded-3xl max-w-md w-full p-6 border-sky-500/40 shadow-2xl relative">
-      <button onclick="toggleSupabaseModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white">
-        <i class="fa-solid fa-xmark text-lg"></i>
-      </button>
-
-      <div class="flex items-center gap-2.5 mb-4">
-        <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-lg">
-          <i class="fa-solid fa-database"></i>
-        </div>
-        <div>
-          <h3 class="text-lg font-black text-white">Conexión Supabase (PostgreSQL)</h3>
-          <p class="text-xs text-stone-400">Sincronización en tiempo real del Club Shimaya</p>
-        </div>
-      </div>
-
-      <div class="space-y-4">
-        <div>
-          <label class="text-xs font-semibold text-stone-300 block mb-1">Supabase Project URL:</label>
-          <input type="text" id="supabaseUrlInput" value="https://wmyxzvlfhxhwwfwtqgqe.supabase.co" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-sky-500">
-        </div>
-
-        <div>
-          <label class="text-xs font-semibold text-stone-300 block mb-1">Supabase Anon Key (Public API Key):</label>
-          <input type="password" id="supabaseAnonKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-sky-500">
-          <p class="text-[10px] text-stone-500 mt-1">Obtén tu Anon Key en el panel de Supabase: Settings -> API -> anon public.</p>
-        </div>
-
-        <div class="bg-stone-900/90 p-3 rounded-xl border border-stone-800 text-xs space-y-1">
-          <div class="flex justify-between text-stone-400">
-            <span>Estado de Conexión:</span>
-            <span id="modalSupabaseState" class="text-emerald-400 font-bold">Modo Híbrido (Local + Cloud Ready)</span>
-          </div>
-          <div class="flex justify-between text-stone-400">
-            <span>Tablas requeridas:</span>
-            <span class="text-stone-300 font-mono">clientes_fidelidad, catalogo_hitos_mapa</span>
-          </div>
-        </div>
-
-        <div class="flex gap-2">
-          <button onclick="saveSupabaseConfig()" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl text-xs transition">
-            <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Llave
-          </button>
-          <button onclick="testSupabaseConnection()" class="flex-1 bg-stone-800 hover:bg-stone-700 text-sky-300 font-bold py-2.5 rounded-xl text-xs transition border border-stone-700">
-            <i class="fa-solid fa-plug mr-1"></i> Probar Conexión
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="border-t border-stone-900 bg-stone-950/80 py-4 px-4 text-center text-xs text-stone-500">
-    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+  <footer class="border-t border-stone-900 bg-stone-950 py-4 px-4 text-center text-xs text-stone-500">
+    <div class="max-w-md md:max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
       <div>
-        © 2026 <strong>Shimaya Ramen</strong> • Sistema de Fidelización & Recompensas
+        © 2026 <strong>Shimaya Ramen</strong> • Club de Fidelización & Recompensas
       </div>
-      <div class="text-[11px] text-stone-400">
-        Pasaporte Digital Conectado con Supabase & ID POS
+      <div class="flex items-center gap-3 text-[11px]">
+        <button onclick="toggleStaffPosModal()" class="text-stone-500 hover:text-stone-300 underline">
+          Acceso Personal / Caja
+        </button>
       </div>
     </div>
   </footer>
 
   <!-- ================================================================= -->
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- SCRIPTS & LOGICA CLIENTE -->
   <!-- ================================================================= -->
   <script>
-    // 1. SUPABASE CLIENT SETUP
-    const DEFAULT_SUPABASE_URL = 'https://wmyxzvlfhxhwwfwtqgqe.supabase.co';
-    let supabaseClient = null;
-
-    function initSupabase() {
-      const storedUrl = localStorage.getItem('shimaya_supabase_url') || DEFAULT_SUPABASE_URL;
-      const storedKey = localStorage.getItem('shimaya_supabase_anon_key');
-      
-      if (document.getElementById('supabaseUrlInput')) {
-        document.getElementById('supabaseUrlInput').value = storedUrl;
-      }
-      if (storedKey && document.getElementById('supabaseAnonKeyInput')) {
-        document.getElementById('supabaseAnonKeyInput').value = storedKey;
-      }
-
-      if (window.supabase && storedKey) {
-        try {
-          supabaseClient = window.supabase.createClient(storedUrl, storedKey);
-          document.getElementById('supabaseStatusDot').className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
-          document.getElementById('supabaseStatusText').textContent = 'Supabase Conectado';
-        } catch (e) {
-          console.warn('Supabase init warning:', e);
-          document.getElementById('supabaseStatusText').textContent = 'Modo Local / Demo';
-        }
-      } else {
-        document.getElementById('supabaseStatusDot').className = 'w-2 h-2 rounded-full bg-amber-400';
-        document.getElementById('supabaseStatusText').textContent = 'Modo Local (Listo)';
-      }
-    }
-
-    function toggleSupabaseModal() {
-      document.getElementById('supabaseModal').classList.toggle('hidden');
-    }
-
-    function saveSupabaseConfig() {
-      const url = document.getElementById('supabaseUrlInput').value.trim();
-      const key = document.getElementById('supabaseAnonKeyInput').value.trim();
-      
-      localStorage.setItem('shimaya_supabase_url', url);
-      if (key) {
-        localStorage.setItem('shimaya_supabase_anon_key', key);
-      } else {
-        localStorage.removeItem('shimaya_supabase_anon_key');
-      }
-
-      initSupabase();
-      alert('Configuración de Supabase guardada exitosamente.');
-      toggleSupabaseModal();
-    }
-
-    async function testSupabaseConnection() {
-      const url = document.getElementById('supabaseUrlInput').value.trim();
-      const key = document.getElementById('supabaseAnonKeyInput').value.trim();
-      
-      if (!key) {
-        alert('Por favor ingresa tu Supabase Anon Key para probar la conexión.');
-        return;
-      }
-
-      try {
-        const client = window.supabase.createClient(url, key);
-        const { data, error } = await client.from('clientes_fidelidad').select('count', { count: 'exact', head: true });
-        
-        if (error) {
-          alert('Error conectando a Supabase:\n' + error.message);
-        } else {
-          alert('✅ ¡Conexión exitosa con Supabase!\nEl esquema schema_club_shimaya.sql está listo y accesible.');
-        }
-      } catch (err) {
-        alert('Error inesperado al conectar:\n' + err.message);
-      }
-    }
-
-    // 2. BASE DE DATOS LOCAL CON SEMILLA REAL (DEMO SOCIOS & CLIENTES)
-    const DB_USERS = {
+    // 1. BASE DE CLIENTES
+    const CLIENTS_DB = {
       '74829103': {
         name: 'Marco Ramos',
         dni: '74829103',
-        points: 22, // 22 Puntos (6% Cashback sobre S/ 360 consumidos)
+        points: 22, // 22 Pts (6% cashback de S/ 360)
         visits: 5,
         cycle: 1,
         lastVisitDate: '2026-10-24',
@@ -958,7 +604,7 @@
       '45102938': {
         name: 'Lucía Mendoza',
         dni: '45102938',
-        points: 4, // 4 Puntos = S/ 80 consumidos
+        points: 4,
         visits: 1,
         cycle: 1,
         lastVisitDate: '2026-10-20',
@@ -969,7 +615,7 @@
       '74156527': {
         name: 'Adrian Smith',
         dni: '74156527',
-        points: 35, // 35 Puntos
+        points: 35,
         visits: 8,
         cycle: 2, // VIP Sensei 1.2x
         lastVisitDate: '2026-10-22',
@@ -980,235 +626,37 @@
       }
     };
 
-    let currentUser = DB_USERS['74829103'];
+    let activeClient = null;
 
-    // 3. CATÁLOGO DE LA TIENDA DE PUNTOS (PRODUCTOS REALES DE ID POS)
-    // Regla: 1 Sol en Carta ID POS = 1 Punto en Tienda | 6% Cashback en Consumo
-    const REWARDS_CATALOG = [
-      {
-        id: 'te_jazmin',
-        category: 'bebidas',
-        title: 'Te De Jazmin Taza',
-        desc: 'JUGOS • Sugerencia preliminar sujeta a cambio',
-        points: 5,
-        value: 'S/ 5.00',
-        icon: '🍵',
-        tag: '5 Pts (~S/ 83 en compras)'
-      },
-      {
-        id: 'fideo_ramen',
-        category: 'entradas',
-        title: 'Porción Fideo Ramen',
-        desc: 'GUARNICIONES • Sugerencia preliminar sujeta a cambio',
-        points: 8,
-        value: 'S/ 8.00',
-        icon: '🍜',
-        tag: '8 Pts (~S/ 133 en compras)'
-      },
-      {
-        id: 'te_afrutado',
-        category: 'bebidas',
-        title: 'Te Afrutado Taza',
-        desc: 'JUGOS • Sugerencia preliminar sujeta a cambio',
-        points: 8,
-        value: 'S/ 8.00',
-        icon: '🍹',
-        tag: '8 Pts (~S/ 133 en compras)'
-      },
-      {
-        id: 'soda_frutos',
-        category: 'bebidas',
-        title: 'SODA FRUTOS DEL BOSQUE',
-        desc: 'JUGOS • Sugerencia preliminar sujeta a cambio',
-        points: 12,
-        value: 'S/ 12.00',
-        icon: '🍹',
-        tag: '12 Pts (~S/ 200 en compras)'
-      },
-      {
-        id: 'puchi_kurimu',
-        category: 'bebidas',
-        title: 'Puchi Kurimu',
-        desc: 'OTROS • Sugerencia preliminar sujeta a cambio',
-        points: 15,
-        value: 'S/ 15.00',
-        icon: '🧁',
-        tag: '15 Pts (~S/ 250 en compras)'
-      },
-      {
-        id: 'maki_acevichado_media',
-        category: 'entradas',
-        title: 'Maki Acevichado 1/2 Tabla',
-        desc: 'MAKIS 1/2 TABLA • Sugerencia preliminar sujeta a cambio',
-        points: 16,
-        value: 'S/ 16.00',
-        icon: '🍱',
-        tag: '16 Pts (~S/ 267 en compras)'
-      },
-      {
-        id: 'maki_furai_media',
-        category: 'entradas',
-        title: 'Maki Furai 1/2 Tabla',
-        desc: 'MAKIS 1/2 TABLA • Sugerencia preliminar sujeta a cambio',
-        points: 16,
-        value: 'S/ 16.00',
-        icon: '🍱',
-        tag: '16 Pts (~S/ 267 en compras)'
-      },
-      {
-        id: 'age_gyozas',
-        category: 'entradas',
-        title: 'Age Gyozas x 6 und.',
-        desc: 'ENTRADAS • Sugerencia preliminar sujeta a cambio',
-        points: 20,
-        value: 'S/ 20.00',
-        icon: '🥟',
-        tag: '20 Pts (~S/ 340 en compras)'
-      },
-      {
-        id: 'vale_20',
-        category: 'entradas',
-        title: 'Vale de S/ 20.00 de Descuento',
-        desc: 'CUPÓN • Consumo mín. S/ 50.00 en mesa',
-        points: 20,
-        value: 'S/ 20.00',
-        icon: '🎟️',
-        tag: '20 Pts (~S/ 340 en compras)'
-      },
-      {
-        id: 'gyozas_vapor',
-        category: 'entradas',
-        title: 'Gyozas x 6und.',
-        desc: 'ENTRADAS • Sugerencia preliminar sujeta a cambio',
-        points: 21,
-        value: 'S/ 21.00',
-        icon: '🥟',
-        tag: '21 Pts (~S/ 350 en compras)'
-      },
-      {
-        id: 'ebi_furai',
-        category: 'entradas',
-        title: 'Ebi Furai x 6 und.',
-        desc: 'ENTRADAS • Sugerencia preliminar sujeta a cambio',
-        points: 23,
-        value: 'S/ 23.00',
-        icon: '🍤',
-        tag: '23 Pts (~S/ 383 en compras)'
-      },
-      {
-        id: 'yakitori',
-        category: 'entradas',
-        title: 'Yakitori',
-        desc: 'ENTRADAS • Sugerencia preliminar sujeta a cambio',
-        points: 23,
-        value: 'S/ 23.00',
-        icon: '🍢',
-        tag: '23 Pts (~S/ 383 en compras)'
-      },
-      {
-        id: 'karage',
-        category: 'entradas',
-        title: 'Karage',
-        desc: 'ENTRADAS • Sugerencia preliminar sujeta a cambio',
-        points: 23,
-        value: 'S/ 23.00',
-        icon: '🍗',
-        tag: '23 Pts (~S/ 383 en compras)'
-      },
-      {
-        id: 'tonkotsu_s',
-        category: 'ramen',
-        title: 'Tonkotsu Ramen S',
-        desc: 'RAMEN S • Sugerencia preliminar sujeta a cambio',
-        points: 24,
-        value: 'S/ 24.00',
-        icon: '🍜',
-        tag: '24 Pts (~S/ 400 en compras)'
-      },
-      {
-        id: 'chasu_s',
-        category: 'ramen',
-        title: 'Chasu Ramen S',
-        desc: 'RAMEN S • Sugerencia preliminar sujeta a cambio',
-        points: 25,
-        value: 'S/ 25.00',
-        icon: '🍜',
-        tag: '25 Pts (~S/ 417 en compras)'
-      },
-      {
-        id: 'cheesecake',
-        category: 'bebidas',
-        title: 'Cheesecake japones',
-        desc: 'OTROS • Sugerencia preliminar sujeta a cambio',
-        points: 25,
-        value: 'S/ 25.00',
-        icon: '🍰',
-        tag: '25 Pts (~S/ 417 en compras)'
-      },
-      {
-        id: 'alitas_bbq',
-        category: 'entradas',
-        title: 'Alitas BBQ x 6 unid',
-        desc: 'ALITAS • Sugerencia preliminar sujeta a cambio',
-        points: 25,
-        value: 'S/ 25.00',
-        icon: '🍗',
-        tag: '25 Pts (~S/ 417 en compras)'
-      },
-      {
-        id: 'alitas_acevichadas',
-        category: 'entradas',
-        title: 'Alitas acevichadas x 6 unid',
-        desc: 'ALITAS • Sugerencia preliminar sujeta a cambio',
-        points: 25,
-        value: 'S/ 25.00',
-        icon: '🍗',
-        tag: '25 Pts (~S/ 417 en compras)'
-      },
-      {
-        id: 'maki_acevichado_tabla',
-        category: 'entradas',
-        title: 'Maki Acevichado 1 Tabla',
-        desc: 'MAKIS 1 TABLA • Sugerencia preliminar sujeta a cambio',
-        points: 27,
-        value: 'S/ 27.00',
-        icon: '🍣',
-        tag: '27 Pts (~S/ 450 en compras)'
-      },
-      {
-        id: 'chaufa',
-        category: 'ramen',
-        title: 'Chaufa Shimaya',
-        desc: 'PLATOS DE FONDO • Sugerencia preliminar sujeta a cambio',
-        points: 29,
-        value: 'S/ 29.00',
-        icon: '🍚',
-        tag: '29 Pts (~S/ 483 en compras)'
-      },
-      {
-        id: 'chasu_m',
-        category: 'ramen',
-        title: 'Chasu Ramen M',
-        desc: 'RAMEN M • Sugerencia preliminar sujeta a cambio',
-        points: 34,
-        value: 'S/ 34.00',
-        icon: '🔥',
-        tag: '34 Pts (~S/ 567 en compras)'
-      },
-      {
-        id: 'batayaki',
-        category: 'ramen',
-        title: 'Batayaki ramen',
-        desc: 'PLATOS DE FONDO • Sugerencia preliminar sujeta a cambio',
-        points: 34,
-        value: 'S/ 34.00',
-        icon: '🔥',
-        tag: '34 Pts (~S/ 567 en compras)'
-      }
+    // 2. CATÁLOGO DE LA TIENDA DE PUNTOS (PRODUCTOS REALES DE ID POS)
+    // 1 Sol = 1 Punto | Basado en el 6% de Cashback
+    const CLIENT_STORE_ITEMS = [
+      { id: 'te_jazmin', cat: 'bebidas', name: 'Te De Jazmin Taza', desc: 'JUGOS • Sugerencia preliminar', pts: 5, sol: 'S/ 5.00', icon: '🍵', tag: '~S/ 83 en compras' },
+      { id: 'fideo_ramen', cat: 'entradas', name: 'Porción Fideo Ramen', desc: 'GUARNICIONES • Sugerencia preliminar', pts: 8, sol: 'S/ 8.00', icon: '🍜', tag: '~S/ 133 en compras' },
+      { id: 'te_afrutado', cat: 'bebidas', name: 'Te Afrutado Taza', desc: 'JUGOS • Sugerencia preliminar', pts: 8, sol: 'S/ 8.00', icon: '🍹', tag: '~S/ 133 en compras' },
+      { id: 'soda_frutos', cat: 'bebidas', name: 'SODA FRUTOS DEL BOSQUE', desc: 'JUGOS • Sugerencia preliminar', pts: 12, sol: 'S/ 12.00', icon: '🍹', tag: '~S/ 200 en compras' },
+      { id: 'puchi_kurimu', cat: 'bebidas', name: 'Puchi Kurimu', desc: 'OTROS • Sugerencia preliminar', pts: 15, sol: 'S/ 15.00', icon: '🧁', tag: '~S/ 250 en compras' },
+      { id: 'maki_acevichado_media', cat: 'entradas', name: 'Maki Acevichado 1/2 Tabla', desc: 'MAKIS 1/2 TABLA • Sugerencia preliminar', pts: 16, sol: 'S/ 16.00', icon: '🍱', tag: '~S/ 267 en compras' },
+      { id: 'maki_furai_media', cat: 'entradas', name: 'Maki Furai 1/2 Tabla', desc: 'MAKIS 1/2 TABLA • Sugerencia preliminar', pts: 16, sol: 'S/ 16.00', icon: '🍱', tag: '~S/ 267 en compras' },
+      { id: 'age_gyozas', cat: 'entradas', name: 'Age Gyozas x 6 und.', desc: 'ENTRADAS • Sugerencia preliminar', pts: 20, sol: 'S/ 20.00', icon: '🥟', tag: '~S/ 340 en compras' },
+      { id: 'vale_20', cat: 'entradas', name: 'Vale de S/ 20.00 de Descuento', desc: 'CUPÓN • Consumo mín. S/ 50.00', pts: 20, sol: 'S/ 20.00', icon: '🎟️', tag: '~S/ 340 en compras' },
+      { id: 'gyozas_vapor', cat: 'entradas', name: 'Gyozas x 6und.', desc: 'ENTRADAS • Sugerencia preliminar', pts: 21, sol: 'S/ 21.00', icon: '🥟', tag: '~S/ 350 en compras' },
+      { id: 'ebi_furai', cat: 'entradas', name: 'Ebi Furai x 6 und.', desc: 'ENTRADAS • Sugerencia preliminar', pts: 23, sol: 'S/ 23.00', icon: '🍤', tag: '~S/ 383 en compras' },
+      { id: 'yakitori', cat: 'entradas', name: 'Yakitori', desc: 'ENTRADAS • Sugerencia preliminar', pts: 23, sol: 'S/ 23.00', icon: '🍢', tag: '~S/ 383 en compras' },
+      { id: 'karage', cat: 'entradas', name: 'Karage', desc: 'ENTRADAS • Sugerencia preliminar', pts: 23, sol: 'S/ 23.00', icon: '🍗', tag: '~S/ 383 en compras' },
+      { id: 'tonkotsu_s', cat: 'ramen', name: 'Tonkotsu Ramen S', desc: 'RAMEN S • Sugerencia preliminar', pts: 24, sol: 'S/ 24.00', icon: '🍜', tag: '~S/ 400 en compras' },
+      { id: 'chasu_s', cat: 'ramen', name: 'Chasu Ramen S', desc: 'RAMEN S • Sugerencia preliminar', pts: 25, sol: 'S/ 25.00', icon: '🍜', tag: '~S/ 417 en compras' },
+      { id: 'cheesecake', cat: 'bebidas', name: 'Cheesecake japones', desc: 'OTROS • Sugerencia preliminar', pts: 25, sol: 'S/ 25.00', icon: '🍰', tag: '~S/ 417 en compras' },
+      { id: 'alitas_bbq', cat: 'entradas', name: 'Alitas BBQ x 6 unid', desc: 'ALITAS • Sugerencia preliminar', pts: 25, sol: 'S/ 25.00', icon: '🍗', tag: '~S/ 417 en compras' },
+      { id: 'alitas_acevichadas', cat: 'entradas', name: 'Alitas acevichadas x 6 unid', desc: 'ALITAS • Sugerencia preliminar', pts: 25, sol: 'S/ 25.00', icon: '🍗', tag: '~S/ 417 en compras' },
+      { id: 'maki_acevichado_tabla', cat: 'entradas', name: 'Maki Acevichado 1 Tabla', desc: 'MAKIS 1 TABLA • Sugerencia preliminar', pts: 27, sol: 'S/ 27.00', icon: '🍣', tag: '~S/ 450 en compras' },
+      { id: 'chaufa', cat: 'ramen', name: 'Chaufa Shimaya', desc: 'PLATOS DE FONDO • Sugerencia preliminar', pts: 29, sol: 'S/ 29.00', icon: '🍚', tag: '~S/ 483 en compras' },
+      { id: 'chasu_m', cat: 'ramen', name: 'Chasu Ramen M', desc: 'RAMEN M • Sugerencia preliminar', pts: 34, sol: 'S/ 34.00', icon: '🔥', tag: '~S/ 567 en compras' },
+      { id: 'batayaki', cat: 'ramen', name: 'Batayaki ramen', desc: 'PLATOS DE FONDO • Sugerencia preliminar', pts: 34, sol: 'S/ 34.00', icon: '🔥', tag: '~S/ 567 en compras' }
     ];
 
-    // 4. EL CAMINITO DE SHIMAYITO (10 ESTACIONES OFICIALES)
-    const TRAIL_STEPS = [
+    // 3. LAS 10 ESTACIONES OFICIALES DEL CAMINITO
+    const CLIENT_TRAIL_STEPS = [
       { visit: 1, title: 'Hito Inicial', prize: 'Te De Jazmin Taza', icon: '🍵', isMilestone: true },
       { visit: 2, title: 'Parada Menor', prize: 'Porción Fideo Ramen', icon: '🍜', isMilestone: false },
       { visit: 3, title: 'Hito Entrada', prize: 'Age Gyozas x 6 und.', icon: '🥟', isMilestone: true },
@@ -1221,67 +669,76 @@
       { visit: 10, title: '¡GRAN FINAL!', prize: 'Tonkotsu Ramen S o Chasu Ramen S 👑', icon: '👑', isMilestone: true, isGrand: true }
     ];
 
-    // 5. LOGIN Y CONSULTA POR DNI
-    function handleDniKey(e) {
-      if (e.key === 'Enter') loginUser();
-    }
-
-    function quickLogin(dni) {
-      document.getElementById('dniInput').value = dni;
-      loginUser();
-    }
-
-    function scrollToDniInput() {
-      const el = document.getElementById('dniSearchSection');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-        document.getElementById('dniInput').focus();
-        document.getElementById('dniInput').select();
+    // 4. SUPABASE INICIALIZACIÓN DISCRETA
+    let clientSupabase = null;
+    try {
+      if (window.supabase) {
+        const storedKey = localStorage.getItem('shimaya_supabase_anon_key');
+        if (storedKey) {
+          clientSupabase = window.supabase.createClient('https://wmyxzvlfhxhwwfwtqgqe.supabase.co', storedKey);
+        }
       }
+    } catch(e) {
+      console.log('Supabase offline fallback listo');
     }
 
-    async function loginUser() {
+    // 5. CONTROL DE VISTAS (LOGIN VS DASHBOARD)
+    function handleDniKey(e) {
+      if (e.key === 'Enter') consultarDni();
+    }
+
+    function quickSelectDni(dni) {
+      document.getElementById('dniInput').value = dni;
+      consultarDni();
+    }
+
+    function showLoginView() {
+      document.getElementById('view-login').classList.remove('hidden');
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('btnSwitchDniHeader').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function consultarDni() {
       const dni = document.getElementById('dniInput').value.trim();
       if (!dni || dni.length !== 8 || isNaN(dni)) {
-        alert('Por favor ingresa un número de DNI válido de 8 dígitos numéricos.');
+        alert('Por favor ingresa un número de DNI válido de 8 dígitos.');
         return;
       }
 
-      // Si Supabase está conectado, consultar primero en Supabase
-      if (supabaseClient) {
+      // Si Supabase está disponible, intentamos consultar en Supabase
+      if (clientSupabase) {
         try {
-          const { data, error } = await supabaseClient
+          const { data, error } = await clientSupabase
             .from('clientes_fidelidad')
             .select('*')
             .eq('dni', dni)
             .single();
 
           if (data && !error) {
-            currentUser = {
+            activeClient = {
               name: data.nombre,
               dni: data.dni,
               points: data.puntos_disponibles,
               visits: data.hito_actual || 1,
               cycle: data.nivel_ciclo || 1,
               lastVisitDate: data.fecha_ultima_visita,
-              history: DB_USERS[dni] ? DB_USERS[dni].history : [{ date: 'Hoy', amount: 30, pointsAdded: 2, note: 'Sincronizado desde Supabase' }]
+              history: CLIENTS_DB[dni] ? CLIENTS_DB[dni].history : [{ date: 'Hoy', amount: 35, pointsAdded: 2, note: 'Boleta registrada' }]
             };
-            renderDashboard();
-            triggerConfetti();
+            openClientDashboard();
             return;
           }
-        } catch (e) {
-          console.warn('Fallo consulta Supabase, pasando a fallback local:', e);
+        } catch (err) {
+          console.warn('Fallback a local:', err);
         }
       }
 
       // Fallback a base local
-      if (!DB_USERS[dni]) {
-        // Nuevo cliente
-        DB_USERS[dni] = {
-          name: 'Cliente Shimaya (' + dni.slice(0, 3) + '***)',
+      if (!CLIENTS_DB[dni]) {
+        CLIENTS_DB[dni] = {
+          name: 'Comensal Shimaya (' + dni.slice(0, 3) + '***)',
           dni: dni,
-          points: 1, // 1 punto de bienvenida
+          points: 1, // Bono de bienvenida
           visits: 1,
           cycle: 1,
           lastVisitDate: null,
@@ -1289,107 +746,116 @@
         };
       }
 
-      currentUser = DB_USERS[dni];
-      renderDashboard();
-      triggerConfetti();
+      activeClient = CLIENTS_DB[dni];
+      openClientDashboard();
     }
 
-    function triggerConfetti() {
+    function openClientDashboard() {
+      renderClientDashboard();
+
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('view-dashboard').classList.remove('hidden');
+      document.getElementById('btnSwitchDniHeader').classList.remove('hidden');
+
       confetti({
         particleCount: 50,
         spread: 60,
         origin: { y: 0.7 },
         colors: ['#e11d48', '#f59e0b', '#ffffff']
       });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      switchTab('tienda');
     }
 
-    // 6. RENDERIZADO DEL DASHBOARD
-    function renderDashboard() {
-      if (!currentUser) return;
+    // 6. RENDERIZADO DEL DASHBOARD DEL CLIENTE
+    function renderClientDashboard() {
+      if (!activeClient) return;
 
-      document.getElementById('userName').textContent = currentUser.name;
-      document.getElementById('userDni').textContent = currentUser.dni;
-      document.getElementById('userPoints').textContent = currentUser.points;
-      document.getElementById('userSolesEquiv').textContent = (currentUser.points * 1.0).toFixed(2);
-      document.getElementById('storePointsBalance').textContent = currentUser.points;
-      document.getElementById('userVisits').textContent = currentUser.visits;
-      document.getElementById('historialDni').textContent = currentUser.dni;
+      document.getElementById('clientName').textContent = activeClient.name;
+      document.getElementById('clientDni').textContent = activeClient.dni;
+      document.getElementById('clientPoints').textContent = activeClient.points;
+      document.getElementById('clientSolesEquiv').textContent = (activeClient.points * 1.0).toFixed(2);
+      document.getElementById('storePointsAvailable').textContent = activeClient.points;
+      document.getElementById('clientVisits').textContent = activeClient.visits;
 
-      const cycle = currentUser.cycle || 1;
-      document.getElementById('userCycleText').textContent = cycle >= 2 ? `Ciclo ${cycle} (SENSEI VIP 1.2x)` : `Ciclo ${cycle} (Regular)`;
+      const cycle = activeClient.cycle || 1;
+      document.getElementById('clientCycleText').textContent = cycle >= 2 ? `Ciclo ${cycle} (SENSEI VIP 1.2x)` : `Ciclo ${cycle} (Regular)`;
 
       const target = 10;
-      const visits = currentUser.visits;
+      const visits = activeClient.visits;
       const remaining = Math.max(0, target - visits);
-      document.getElementById('visitsRemainingText').textContent = remaining === 0 ? '¡LISTO PARA TU RAMEN GRATIS!' : `${remaining} visita${remaining > 1 ? 's' : ''}`;
+      const nextHype = remaining === 0 
+        ? '¡LISTO PARA RECLAMAR TU RAMEN CUMBRE GRATIS! 👑' 
+        : `¡Estás a solo ${remaining} visita${remaining > 1 ? 's' : ''} de tu siguiente gran premio!`;
+      document.getElementById('clientNextHype').textContent = nextHype;
 
       const pct = Math.min(100, Math.round((visits / target) * 100));
-      document.getElementById('progressPercentageText').textContent = `${pct}% de la ruta`;
-      document.getElementById('caminitoProgressPct').textContent = `${pct}% completado`;
+      document.getElementById('clientProgressText').textContent = `${pct}% completado`;
+      document.getElementById('caminitoBadgePct').textContent = `${pct}%`;
 
-      renderCaminito();
-      renderRewardsGrid();
-      renderHistorial();
+      renderClientTrail();
+      renderClientStore();
+      renderClientHistory();
     }
 
-    function renderCaminito() {
-      const visits = currentUser.visits;
-      const container = document.getElementById('caminitoContainer');
+    // 7. RENDERIZADO DEL CAMINITO
+    function renderClientTrail() {
+      const visits = activeClient.visits;
+      const container = document.getElementById('clientTrailContainer');
       let html = '';
 
       html += `
-        <div class="relative pl-6 sm:pl-8 space-y-6 sm:space-y-8 before:absolute before:left-[27px] sm:before:left-[35px] before:top-4 before:bottom-4 before:w-1 before:bg-gradient-to-b before:from-emerald-500 before:via-amber-500 before:to-stone-800">
+        <div class="relative pl-6 sm:pl-8 space-y-6 sm:space-y-7 before:absolute before:left-[26px] sm:before:left-[34px] before:top-4 before:bottom-4 before:w-1 before:bg-gradient-to-b before:from-emerald-500 before:via-amber-500 before:to-stone-800">
       `;
 
-      TRAIL_STEPS.forEach((step) => {
+      CLIENT_TRAIL_STEPS.forEach((step) => {
         const isDone = visits >= step.visit;
         const isCurrent = visits === step.visit;
-        const isNextUnlock = visits + 1 === step.visit;
+        const isNext = visits + 1 === step.visit;
 
         let nodeColor = 'bg-stone-900 border-stone-700 text-stone-500';
-        let badgeText = `<span class="text-[10px] text-stone-500 font-bold uppercase">Estación ${step.visit < 10 ? '0' + step.visit : step.visit}</span>`;
+        let badge = `<span class="text-[9px] text-stone-500 font-bold uppercase">Estación ${step.visit < 10 ? '0' + step.visit : step.visit}</span>`;
 
         if (isDone) {
           nodeColor = 'bg-emerald-600 border-emerald-400 text-white shadow-lg shadow-emerald-950/60';
-          badgeText = `<span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold px-2 py-0.5 rounded-full uppercase">Completado ✓</span>`;
+          badge = `<span class="text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold px-2 py-0.5 rounded-full uppercase">Completado ✓</span>`;
         }
         if (isCurrent) {
-          badgeText = `<span class="text-[10px] bg-gradient-to-r from-amber-500 to-rose-600 text-stone-950 font-black px-2.5 py-0.5 rounded-full uppercase shadow-lg flex items-center gap-1 animate-pulse">
-            <span>🦝</span> <span>¡Shimayito está aquí!</span>
+          badge = `<span class="text-[9px] bg-gradient-to-r from-amber-500 to-rose-600 text-stone-950 font-black px-2 py-0.5 rounded-full uppercase shadow flex items-center gap-1 animate-pulse">
+            <span>🦝</span> ¡Shimayito está aquí!
           </span>`;
-        } else if (isNextUnlock) {
+        } else if (isNext) {
           nodeColor = 'bg-amber-500 border-amber-300 text-stone-950 font-black shadow-lg shadow-amber-900/50 pulse-ring-effect';
-          badgeText = `<span class="text-[10px] bg-amber-950 text-amber-300 border border-amber-800 font-black px-2 py-0.5 rounded-full uppercase animate-pulse">🎯 ¡Tu Siguiente Meta!</span>`;
+          badge = `<span class="text-[9px] bg-amber-950 text-amber-300 border border-amber-800 font-black px-2 py-0.5 rounded-full uppercase animate-pulse">🎯 Tu Siguiente Meta</span>`;
         }
 
         html += `
-          <div class="relative flex items-start gap-4 sm:gap-6 step-node group cursor-pointer" onclick="handleStepClick(${step.visit}, '${step.prize}', ${isDone})">
-            <!-- Node Pin -->
-            <div class="relative z-10 w-9 h-9 sm:w-11 sm:h-11 rounded-full border-2 ${nodeColor} flex items-center justify-center text-base sm:text-lg flex-shrink-0">
+          <div class="relative flex items-start gap-3.5 sm:gap-5 step-node cursor-pointer" onclick="clickStep(${step.visit}, '${step.prize}', ${isDone})">
+            <!-- Pin -->
+            <div class="relative z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 ${nodeColor} flex items-center justify-center text-sm sm:text-base flex-shrink-0">
               ${isDone ? '✓' : step.icon}
             </div>
 
-            <!-- Content Card -->
-            <div class="flex-grow p-4 rounded-2xl ${isDone ? 'bg-stone-900/80 border border-emerald-900/40' : (isNextUnlock ? 'bg-stone-900 border-2 border-amber-500/60 glow-gold' : 'bg-stone-900/40 border border-stone-800')} transition-all">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                  <h4 class="font-extrabold text-sm sm:text-base text-white">${step.title}</h4>
-                  ${step.isGrand ? '<span class="bg-gradient-to-r from-amber-500 to-rose-600 text-stone-950 font-black text-[9px] px-2 py-0.5 rounded-md uppercase">Premio Cumbre</span>' : ''}
+            <!-- Card -->
+            <div class="flex-grow p-3.5 rounded-2xl ${isDone ? 'bg-stone-900/80 border border-emerald-900/40' : (isNext ? 'bg-stone-900 border-2 border-amber-500/60 glow-gold' : 'bg-stone-900/40 border border-stone-800')}">
+              <div class="flex flex-wrap items-center justify-between gap-1.5">
+                <div class="flex items-center gap-1.5">
+                  <h4 class="font-extrabold text-xs sm:text-sm text-white">${step.title}</h4>
+                  ${step.isGrand ? '<span class="bg-gradient-to-r from-amber-500 to-rose-600 text-stone-950 font-black text-[8px] px-1.5 py-0.5 rounded uppercase">Premio Cumbre</span>' : ''}
                 </div>
-                ${badgeText}
+                ${badge}
               </div>
 
-              <div class="mt-1 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm ${isDone ? 'text-emerald-300 font-medium' : (isNextUnlock ? 'text-amber-300 font-bold' : 'text-stone-400')}">
-                <div class="flex items-center gap-2">
-                  <i class="fa-solid fa-gift text-xs"></i>
-                  <span>${step.prize}</span>
-                </div>
+              <div class="mt-1 flex items-center gap-1.5 text-xs ${isDone ? 'text-emerald-300 font-semibold' : (isNext ? 'text-amber-300 font-bold' : 'text-stone-400')}">
+                <i class="fa-solid fa-gift text-[11px]"></i>
+                <span>${step.prize}</span>
               </div>
 
               ${isDone && step.isMilestone ? `
-                <div class="mt-2.5">
-                  <button class="text-[11px] bg-emerald-950 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 font-bold px-3 py-1 rounded-lg flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-qrcode"></i> Ver Cupón QR para Mostrar en Mesa
+                <div class="mt-2">
+                  <button class="text-[10px] bg-emerald-950 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    <i class="fa-solid fa-qrcode"></i> Mostrar Cupón en Mesa
                   </button>
                 </div>
               ` : ''}
@@ -1402,53 +868,53 @@
       container.innerHTML = html;
     }
 
-    function handleStepClick(visitNumber, prize, isDone) {
+    function clickStep(visitNum, prize, isDone) {
       if (isDone) {
-        showRedeemModal(prize, `VISITA-${visitNumber}-OK`);
+        openVoucher(prize, `VISITA-${visitNum}-OK`);
       } else {
-        alert(`Esta recompensa se desbloqueará en tu visita #${visitNumber}. ¡Sigue acumulando tus boletas con DNI!`);
+        alert(`Esta recompensa se desbloqueará en tu visita #${visitNum}. ¡Sigue acumulando tus boletas con DNI!`);
       }
     }
 
-    // 7. RENDERIZADO DE LA TIENDA DE PUNTOS
-    function renderRewardsGrid(filter = 'all') {
-      const container = document.getElementById('rewardsGrid');
-      const filtered = filter === 'all' ? REWARDS_CATALOG : REWARDS_CATALOG.filter(r => r.category === filter);
+    // 8. RENDERIZADO DE LA TIENDA DE PUNTOS
+    function renderClientStore(filter = 'all') {
+      const container = document.getElementById('clientStoreGrid');
+      const filtered = filter === 'all' ? CLIENT_STORE_ITEMS : CLIENT_STORE_ITEMS.filter(item => item.cat === filter);
 
       container.innerHTML = filtered.map(item => {
-        const canAfford = currentUser.points >= item.points;
+        const canAfford = activeClient.points >= item.pts;
 
         return `
-          <div class="bg-stone-900/90 rounded-2xl border ${canAfford ? 'border-stone-700 hover:border-amber-500/50' : 'border-stone-800 opacity-70'} p-4 flex flex-col justify-between transition-all duration-200">
+          <div class="bg-stone-900/90 rounded-2xl border ${canAfford ? 'border-stone-700 hover:border-amber-500/60 glow-gold' : 'border-stone-800 opacity-75'} p-4 flex flex-col justify-between transition">
             <div>
               <div class="flex items-start justify-between gap-2">
-                <div class="w-12 h-12 rounded-xl bg-stone-800/80 border border-stone-700 flex items-center justify-center text-2xl">
+                <div class="w-11 h-11 rounded-xl bg-stone-800 border border-stone-700 flex items-center justify-center text-xl">
                   ${item.icon}
                 </div>
                 <div class="text-right">
-                  <span class="inline-block px-2.5 py-1 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-black text-sm">
-                    ${item.points} Pts
+                  <span class="inline-block px-2 py-0.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 font-black text-xs">
+                    ${item.pts} Pts
                   </span>
                   <div class="text-[9px] text-stone-500 font-semibold uppercase mt-0.5">${item.tag}</div>
                 </div>
               </div>
 
-              <h4 class="text-white font-extrabold text-base mt-3">${item.title}</h4>
-              <p class="text-stone-400 text-xs mt-1 leading-relaxed">${item.desc}</p>
+              <h4 class="text-white font-extrabold text-sm sm:text-base mt-2.5">${item.name}</h4>
+              <p class="text-stone-400 text-xs mt-0.5">${item.desc}</p>
 
-              <div class="flex items-center gap-2 mt-2.5 pt-2 border-t border-stone-800/60 text-[11px]">
-                <span class="text-amber-300 font-bold">Carta Oficial: ${item.value}</span>
+              <div class="mt-2 pt-2 border-t border-stone-800/80 text-[11px] text-amber-300 font-bold">
+                Carta oficial: ${item.sol}
               </div>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-stone-800/80">
+            <div class="mt-3 pt-2.5 border-t border-stone-800">
               ${canAfford ? `
-                <button onclick="redeemStoreReward('${item.id}', '${item.title}', ${item.points})" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-black text-xs py-2.5 rounded-xl shadow transition flex items-center justify-center gap-1.5">
-                  <i class="fa-solid fa-gift"></i> Canjear Cupón (${item.points} pts)
+                <button onclick="redeemClientReward('${item.id}', '${item.name}', ${item.pts})" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-black text-xs py-2.5 rounded-xl shadow transition flex items-center justify-center gap-1.5 active:scale-98">
+                  <i class="fa-solid fa-gift"></i> Canjear (${item.pts} pts)
                 </button>
               ` : `
                 <div class="w-full bg-stone-800/60 text-stone-500 text-center text-xs py-2 rounded-xl font-medium">
-                  Te faltan ${item.points - currentUser.points} pts
+                  Te faltan ${item.pts - activeClient.points} pts
                 </div>
               `}
             </div>
@@ -1457,130 +923,129 @@
       }).join('');
     }
 
-    function filterCatalog(cat) {
-      document.querySelectorAll('.cat-btn').forEach(btn => {
+    function filterStore(cat) {
+      document.querySelectorAll('.store-filter').forEach(btn => {
         btn.classList.remove('bg-amber-500', 'text-stone-950', 'active');
         btn.classList.add('bg-stone-900', 'text-stone-300');
       });
       event.target.classList.remove('bg-stone-900', 'text-stone-300');
       event.target.classList.add('bg-amber-500', 'text-stone-950', 'active');
-      renderRewardsGrid(cat);
+      renderClientStore(cat);
     }
 
-    function redeemStoreReward(id, title, cost) {
-      if (currentUser.points < cost) return;
+    function redeemClientReward(id, name, pts) {
+      if (activeClient.points < pts) return;
 
-      currentUser.points -= cost;
-      renderDashboard();
+      activeClient.points -= pts;
+      renderClientDashboard();
 
-      triggerConfetti();
+      confetti({
+        particleCount: 60,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
 
       const randomCode = 'SHIMA-' + Math.floor(1000 + Math.random() * 9000) + '-OK';
-      showRedeemModal(title, randomCode);
+      openVoucher(name, randomCode);
     }
 
-    function showRedeemModal(title, code) {
-      document.getElementById('modalRewardTitle').textContent = title;
-      document.getElementById('voucherCodeText').textContent = code;
-      
-      // Generate scannable QR Code
-      const qrContainer = document.getElementById('qrcodeCanvas');
-      qrContainer.innerHTML = '';
-      new QRCode(qrContainer, {
-        text: `SHIMAYA-CANJE:${code}:${currentUser.dni}`,
-        width: 140,
-        height: 140,
+    // 9. MODAL DE CUPÓN QR
+    function openVoucher(title, code) {
+      document.getElementById('voucherDishTitle').textContent = title;
+      document.getElementById('voucherCodeString').textContent = code;
+
+      const qrBox = document.getElementById('voucherQrCanvas');
+      qrBox.innerHTML = '';
+      new QRCode(qrBox, {
+        text: `SHIMAYA-CANJE:${code}:${activeClient.dni}`,
+        width: 150,
+        height: 150,
         colorDark: '#0c0a09',
         colorLight: '#ffffff',
         correctLevel: QRCode.CorrectLevel.H
       });
 
-      document.getElementById('redeemModal').classList.remove('hidden');
+      document.getElementById('voucherModal').classList.remove('hidden');
     }
 
-    function closeRedeemModal() {
-      document.getElementById('redeemModal').classList.add('hidden');
+    function closeVoucherModal() {
+      document.getElementById('voucherModal').classList.add('hidden');
     }
 
-    // 8. RENDERIZADO DEL HISTORIAL
-    function renderHistorial() {
-      const tbody = document.getElementById('historialTableBody');
-      const list = currentUser.history || [];
+    // 10. HISTORIAL DE BOLETAS
+    function renderClientHistory() {
+      const tbody = document.getElementById('clientHistoryBody');
+      const list = activeClient.history || [];
 
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-stone-500">Sin boletas registradas aún.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="py-3 text-center text-stone-500">Sin consumos registrados aún.</td></tr>';
         return;
       }
 
       tbody.innerHTML = list.map(item => `
         <tr class="hover:bg-stone-900/40">
-          <td class="py-3 px-3 text-stone-300">${item.date}</td>
-          <td class="py-3 px-3 text-white font-sans font-medium">${item.note}</td>
-          <td class="py-3 px-3 text-right text-stone-300">S/ ${(item.amount || 0).toFixed(2)}</td>
-          <td class="py-3 px-3 text-right text-amber-400 font-bold">+${item.pointsAdded} Pts</td>
-          <td class="py-3 px-3 text-center">
-            <span class="bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] border border-emerald-800">Acreditada</span>
-          </td>
+          <td class="py-2.5 px-3 text-stone-300">${item.date}</td>
+          <td class="py-2.5 px-3 text-white font-sans font-medium">${item.note}</td>
+          <td class="py-2.5 px-3 text-right text-stone-300">S/ ${(item.amount || 0).toFixed(2)}</td>
+          <td class="py-2.5 px-3 text-right text-amber-400 font-bold">+${item.pointsAdded} Pts</td>
         </tr>
       `).join('');
     }
 
-    // 9. NAVEGACIÓN ENTRE PESTAÑAS
+    // 11. TABS SWITCHER
     function switchTab(tab) {
-      ['tienda', 'caminito', 'historial', 'mecanica', 'flyers', 'sql'].forEach(t => {
-        const contentEl = document.getElementById(`content-${t}`);
-        const tabEl = document.getElementById(`tab-${t}`);
-        if (contentEl) contentEl.classList.add('hidden');
-        if (tabEl) {
-          tabEl.classList.remove('text-amber-400', 'border-amber-500', 'font-bold');
-          tabEl.classList.add('text-stone-400', 'border-transparent', 'font-medium');
+      ['tienda', 'caminito', 'boletas', 'comofunciona'].forEach(t => {
+        const c = document.getElementById(`content-${t}`);
+        const b = document.getElementById(`tab-${t}`);
+        if (c) c.classList.add('hidden');
+        if (b) {
+          b.classList.remove('text-amber-400', 'border-amber-500', 'font-black');
+          b.classList.add('text-stone-400', 'border-transparent', 'font-medium');
         }
       });
 
       const activeContent = document.getElementById(`content-${tab}`);
-      const activeTab = document.getElementById(`tab-${tab}`);
+      const activeBtn = document.getElementById(`tab-${tab}`);
       if (activeContent) activeContent.classList.remove('hidden');
-      if (activeTab) {
-        activeTab.classList.add('text-amber-400', 'border-amber-500', 'font-bold');
-        activeTab.classList.remove('text-stone-400', 'border-transparent', 'font-medium');
+      if (activeBtn) {
+        activeBtn.classList.add('text-amber-400', 'border-amber-500', 'font-black');
+        activeBtn.classList.remove('text-stone-400', 'border-transparent', 'font-medium');
       }
     }
 
-    // 10. SIMULADOR POS EN CAJA (CON CANDADOS ANTIFRAUDE)
-    function toggleCashierModal() {
-      const modal = document.getElementById('cashierModal');
-      modal.classList.toggle('hidden');
-      if (currentUser) {
-        document.getElementById('simDni').value = currentUser.dni;
+    // 12. SIMULADOR POS DISCRETO PARA EL PERSONAL
+    function toggleStaffPosModal() {
+      const m = document.getElementById('staffPosModal');
+      m.classList.toggle('hidden');
+      if (activeClient) {
+        document.getElementById('staffDni').value = activeClient.dni;
       }
-      updateSimCalculations();
+      updateStaffSimCalc();
     }
 
-    function updateSimCalculations() {
-      const amount = parseFloat(document.getElementById('simAmount').value) || 0;
-      const isVip = currentUser && currentUser.cycle >= 2;
-      const pts = Math.round(amount * 0.06 * (isVip ? 1.2 : 1.0));
-      document.getElementById('simPointsCalc').textContent = `+${pts} Punto${pts !== 1 ? 's' : ''} (6% Cashback)`;
+    function updateStaffSimCalc() {
+      const amt = parseFloat(document.getElementById('staffAmount').value) || 0;
+      const isVip = activeClient && activeClient.cycle >= 2;
+      const pts = Math.round(amt * 0.06 * (isVip ? 1.2 : 1.0));
+      document.getElementById('staffPtsCalc').textContent = `+${pts} Puntos`;
     }
 
-    function executeSimulatedSale() {
-      const dni = document.getElementById('simDni').value.trim();
-      const amount = parseFloat(document.getElementById('simAmount').value) || 0;
+    function executeStaffSale() {
+      const dni = document.getElementById('staffDni').value.trim();
+      const amt = parseFloat(document.getElementById('staffAmount').value) || 0;
 
-      // Candado 1: Prohibir Clientes Varios (00000000)
       if (!dni || dni.length !== 8 || dni === '00000000') {
-        alert('🚫 Candado Antifraude Activado:\nNo se permite acumular puntos a "Clientes Varios" (00000000). Es obligatorio ingresar el DNI nominal del comensal.');
+        alert('Candado Antifraude: No se permite registrar a 00000000. Ingrese el DNI nominal del comensal.');
+        return;
+      }
+      if (amt <= 0) {
+        alert('Monto inválido.');
         return;
       }
 
-      if (amount <= 0) {
-        alert('Por favor ingresa un monto válido mayor a S/ 0.');
-        return;
-      }
-
-      if (!DB_USERS[dni]) {
-        DB_USERS[dni] = {
-          name: 'Cliente Shimaya (' + dni.slice(0, 3) + '***)',
+      if (!CLIENTS_DB[dni]) {
+        CLIENTS_DB[dni] = {
+          name: 'Comensal Shimaya (' + dni.slice(0, 3) + '***)',
           dni: dni,
           points: 0,
           visits: 0,
@@ -1590,75 +1055,50 @@
         };
       }
 
-      const user = DB_USERS[dni];
+      const user = CLIENTS_DB[dni];
       const isVip = user.cycle >= 2;
-      const pts = Math.round(amount * 0.06 * (isVip ? 1.2 : 1.0));
-      const todayStr = new Date().toISOString().split('T')[0];
+      const pts = Math.round(amt * 0.06 * (isVip ? 1.2 : 1.0));
+      const today = new Date().toISOString().split('T')[0];
 
-      // Candado 2: Cooldown de 1 hito por día
-      let avanzoHito = false;
-      let motivoBloqueoRuta = '';
-
-      if (user.lastVisitDate === todayStr) {
-        motivoBloqueoRuta = 'Cooldown activo: Ya avanzó 1 hito hoy. La ruta permite máx. 1 estación por día calendario.';
-      } else if (amount < 25.00) {
-        motivoBloqueoRuta = 'Consumo menor a S/ 25.00: No alcanza el umbral mínimo para avanzar casilla en el Mapa.';
-      } else {
-        avanzoHito = true;
-      }
-
-      user.points += pts;
-
-      if (avanzoHito) {
+      let advanced = false;
+      if (user.lastVisitDate !== today && amt >= 25.0) {
+        advanced = true;
         user.visits += 1;
-        user.lastVisitDate = todayStr;
-
+        user.lastVisitDate = today;
         if (user.visits > 10) {
           user.visits = 1;
           user.cycle += 1;
-          alert('🎉 ¡FELICITACIONES! El cliente completó la Estación 10.\nSe ha graduado a Nivel SENSEI VIP con multiplicador permanente de 1.2x en puntos.');
         }
       }
 
+      user.points += pts;
       user.history.unshift({
-        date: 'Hoy (Caja POS)',
-        amount: amount,
+        date: 'Hoy',
+        amount: amt,
         pointsAdded: pts,
-        note: `Boleta B001-${Math.floor(10000 + Math.random() * 90000)} • ${avanzoHito ? 'Avanzó Estación #' + user.visits : 'Puntos sin avance de hito'}`
+        note: `Consumo en sala • ${advanced ? 'Avanzó Estación #' + user.visits : 'Puntos sumados'}`
       });
 
-      toggleCashierModal();
+      toggleStaffPosModal();
+      activeClient = user;
+      openClientDashboard();
 
-      if (currentUser && currentUser.dni === dni) {
-        renderDashboard();
-      } else {
-        quickLogin(dni);
-      }
-
-      triggerConfetti();
-
-      if (avanzoHito) {
-        alert(`✅ ¡Boleta procesada con éxito!\n\n• DNI: ${dni}\n• Monto: S/ ${amount.toFixed(2)}\n• Puntos sumados: +${pts} Pts\n• Avance de Ruta: +1 Estación (Estación #${user.visits} alcanzada)`);
-      } else {
-        alert(`✅ Boleta procesada con puntos:\n\n• DNI: ${dni}\n• Monto: S/ ${amount.toFixed(2)}\n• Puntos sumados: +${pts} Pts\n• Estado del Mapa: No avanzó casilla (${motivoBloqueoRuta})`);
-      }
+      alert(`✅ Boleta procesada: + ${pts} Puntos acreditados al DNI ${dni}.`);
     }
 
-    // 11. INICIALIZACIÓN
+    // 13. AUTO-DETECCIÓN AL ABRIR LA PÁGINA
     document.addEventListener('DOMContentLoaded', () => {
-      initSupabase();
+      // Si el cliente escanea el QR con parámetro ?dni=XXXXXXXX
+      const params = new URLSearchParams(window.location.search);
+      const dniParam = params.get('dni');
 
-      // Detectar si el comensal llegó con URL ?dni=XXXXXXXX del QR del flyer
-      const urlParams = new URLSearchParams(window.location.search);
-      const dniParam = urlParams.get('dni');
       if (dniParam && dniParam.length === 8) {
         document.getElementById('dniInput').value = dniParam;
-        loginUser();
+        consultarDni();
       } else {
-        currentUser = DB_USERS['74829103'];
-        renderDashboard();
+        // Mostrar la pantalla de bienvenida limpia lista para que el cliente ingrese su DNI
+        showLoginView();
       }
-      switchTab('tienda');
     });
   </script>
 </body>
