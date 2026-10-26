@@ -273,9 +273,10 @@
           <span class="text-[9px] bg-stone-800 text-stone-400 px-1.5 py-0.5 rounded-full">10 Estaciones</span>
         </button>
 
-        <button onclick="switchTab('boletas')" id="tab-boletas" class="px-3.5 py-2.5 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-1.5 whitespace-nowrap transition">
-          <i class="fa-solid fa-receipt"></i>
-          <span>Mis Boletas & Cashback</span>
+        <button onclick="switchTab('movimientos')" id="tab-movimientos" class="px-3.5 py-2.5 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-1.5 whitespace-nowrap transition">
+          <i class="fa-solid fa-list-check text-amber-400"></i>
+          <span>Mis Movimientos</span>
+          <span class="text-[9px] bg-emerald-950 text-emerald-400 font-bold px-1.5 py-0.5 rounded-full border border-emerald-800">Historial</span>
         </button>
 
         <button onclick="switchTab('comofunciona')" id="tab-comofunciona" class="px-3.5 py-2.5 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-1.5 whitespace-nowrap transition">
@@ -355,35 +356,67 @@
         </div>
       </div>
 
-      <!-- TAB 3: MIS BOLETAS & CASHBACK -->
-      <div id="content-boletas" class="hidden space-y-4">
+      <!-- TAB 3: MIS MOVIMIENTOS (ESTADO DE CUENTA: VISITAS, PUNTOS SUMADOS Y GASTADOS) -->
+      <div id="content-movimientos" class="hidden space-y-4">
         <div class="glass-card rounded-3xl p-5 sm:p-6">
-          <div class="pb-4 border-b border-stone-800 flex items-center justify-between">
+          
+          <div class="pb-4 border-b border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
-                <i class="fa-solid fa-receipt text-amber-400"></i> Tus Boletas Registradas
+                <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Movimientos de tu Cuenta
               </h3>
               <p class="text-xs text-stone-400 mt-0.5">
-                Comprobantes emitidos con tu DNI. Cada uno acredita el 6% de cashback.
+                Revisa qué día registraste visitas, qué compras sumaron puntos y en qué platos los canjeaste.
               </p>
+            </div>
+            
+            <div class="text-right">
+              <span class="text-xs font-mono text-stone-400 bg-stone-900 px-3 py-1 rounded-lg border border-stone-800">
+                DNI: <strong class="text-white" id="movementUserDni">74829103</strong>
+              </span>
             </div>
           </div>
 
-          <div class="mt-4 overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead>
-                <tr class="border-b border-stone-800 text-stone-400 font-extrabold uppercase tracking-wider text-[10px]">
-                  <th class="py-2.5 px-3">Fecha</th>
-                  <th class="py-2.5 px-3">Consumo</th>
-                  <th class="py-2.5 px-3 text-right">Monto</th>
-                  <th class="py-2.5 px-3 text-right">Cashback</th>
-                </tr>
-              </thead>
-              <tbody id="clientHistoryBody" class="divide-y divide-stone-800/60 font-mono">
-                <!-- Injected via JavaScript -->
-              </tbody>
-            </table>
+          <!-- Resumen de Balance en 4 Tarjetitas -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4">
+            <div class="bg-stone-900/80 p-3 rounded-2xl border border-stone-800 text-center">
+              <span class="text-[10px] text-stone-400 uppercase font-bold block">Saldo Disponible</span>
+              <span class="text-base sm:text-lg font-black text-amber-400" id="movStatAvailable">22 pts</span>
+              <span class="text-[9px] text-stone-500 block">Para canjear hoy</span>
+            </div>
+
+            <div class="bg-stone-900/80 p-3 rounded-2xl border border-stone-800 text-center">
+              <span class="text-[10px] text-emerald-400 uppercase font-bold block">Puntos Ganados</span>
+              <span class="text-base sm:text-lg font-black text-emerald-400" id="movStatEarned">+67 pts</span>
+              <span class="text-[9px] text-stone-500 block">6% de Cashback</span>
+            </div>
+
+            <div class="bg-stone-900/80 p-3 rounded-2xl border border-stone-800 text-center">
+              <span class="text-[10px] text-rose-400 uppercase font-bold block">Puntos Gastados</span>
+              <span class="text-base sm:text-lg font-black text-rose-400" id="movStatSpent">-45 pts</span>
+              <span class="text-[9px] text-stone-500 block">En premios canjeados</span>
+            </div>
+
+            <div class="bg-stone-900/80 p-3 rounded-2xl border border-stone-800 text-center">
+              <span class="text-[10px] text-sky-400 uppercase font-bold block">Visitas en Sala</span>
+              <span class="text-base sm:text-lg font-black text-sky-400" id="movStatVisits">5 Visitas</span>
+              <span class="text-[9px] text-stone-500 block">Hitos en El Camino</span>
+            </div>
           </div>
+
+          <!-- Filtro de Movimientos -->
+          <div class="flex items-center gap-1.5 overflow-x-auto py-2 custom-scroll border-t border-stone-800/80">
+            <button onclick="filterMovements('all')" class="mov-filter active px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-stone-950 transition">Todos los Movimientos</button>
+            <button onclick="filterMovements('EARN')" class="mov-filter px-3 py-1 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-emerald-300 border border-stone-800 transition">🟢 Puntos Sumados (+)</button>
+            <button onclick="filterMovements('SPEND')" class="mov-filter px-3 py-1 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-rose-300 border border-stone-800 transition">🔴 Puntos Gastados (-)</button>
+            <button onclick="filterMovements('VISIT')" class="mov-filter px-3 py-1 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-sky-300 border border-stone-800 transition">🏮 Visitas Registradas</button>
+          </div>
+
+          <!-- Timeline List de Movimientos -->
+          <div class="mt-3 space-y-2.5" id="movementsTimelineContainer">
+            <!-- Dynamically populated via JS -->
+          </div>
+
         </div>
       </div>
 
@@ -496,6 +529,8 @@
   <!-- SCRIPT -->
   <script>
     const STORAGE_KEY = 'shimaya_clients_db';
+    const REDEMPTIONS_KEY = 'shimaya_redemptions_db';
+
     const DEFAULT_CLIENTS = {
       '74829103': {
         name: 'Marco Ramos',
@@ -503,16 +538,62 @@
         phone: '987654321',
         email: 'marco.ramos@gmail.com',
         points: 22,
-        historicPoints: 45,
+        historicPoints: 67, // 67 ganados acumulados
+        pointsSpent: 45,    // 45 gastados en canjes
         visits: 5,
         cycle: 1,
         lastVisitDate: '2026-10-24',
-        history: [
-          { date: '24/10/2026', amount: 80, pointsAdded: 5, note: 'Ramen Tonkotsu S + Té Afrutado' },
-          { date: '18/10/2026', amount: 120, pointsAdded: 7, note: 'Maki Acevichado + Age Gyozas x 6' },
-          { date: '05/10/2026', amount: 65, pointsAdded: 4, note: 'Chasu Ramen S + Soda Frutos' },
-          { date: '25/09/2026', amount: 70, pointsAdded: 4, note: 'Batayaki Ramen + Puchi Kurimu' },
-          { date: '10/09/2026', amount: 50, pointsAdded: 3, note: 'Tonkotsu Ramen S' }
+        movements: [
+          {
+            id: 'MOV-105',
+            date: '24/10/2026 14:15',
+            type: 'EARN',
+            points: 5,
+            title: 'Consumo Boleta B001-4921',
+            detail: 'Ramen Tonkotsu S + Té Afrutado (Consumo S/ 80.00)',
+            stationAdvanced: true,
+            stationNum: 5
+          },
+          {
+            id: 'MOV-104',
+            date: '22/10/2026 20:30',
+            type: 'SPEND',
+            points: -20,
+            title: 'Canje de Plato en Tienda',
+            detail: 'Age Gyozas x 6 und. (Cupón SHIMA-8412-OK)',
+            code: 'SHIMA-8412-OK',
+            dish: 'Age Gyozas x 6 und.'
+          },
+          {
+            id: 'MOV-103',
+            date: '18/10/2026 13:40',
+            type: 'EARN',
+            points: 7,
+            title: 'Consumo Boleta B001-4512',
+            detail: 'Maki Acevichado + Age Gyozas (Consumo S/ 120.00)',
+            stationAdvanced: true,
+            stationNum: 4
+          },
+          {
+            id: 'MOV-102',
+            date: '15/10/2026 19:10',
+            type: 'SPEND',
+            points: -25,
+            title: 'Canje de Plato en Tienda',
+            detail: 'Chasu Ramen S (Cupón SHIMA-3109-OK)',
+            code: 'SHIMA-3109-OK',
+            dish: 'Chasu Ramen S'
+          },
+          {
+            id: 'MOV-101',
+            date: '05/10/2026 14:00',
+            type: 'EARN',
+            points: 4,
+            title: 'Consumo Boleta B001-3990',
+            detail: 'Chasu Ramen S + Soda Frutos (Consumo S/ 65.00)',
+            stationAdvanced: true,
+            stationNum: 3
+          }
         ]
       },
       '45102938': {
@@ -522,11 +603,31 @@
         email: 'lucia.mendoza@hotmail.com',
         points: 4,
         historicPoints: 12,
+        pointsSpent: 8,
         visits: 1,
         cycle: 1,
         lastVisitDate: '2026-10-20',
-        history: [
-          { date: '20/10/2026', amount: 85, pointsAdded: 4, note: 'Chasu Ramen S + Bebida' }
+        movements: [
+          {
+            id: 'MOV-202',
+            date: '20/10/2026 13:30',
+            type: 'EARN',
+            points: 4,
+            title: 'Consumo Boleta B001-4602',
+            detail: 'Chasu Ramen S + Bebida (Consumo S/ 85.00)',
+            stationAdvanced: true,
+            stationNum: 1
+          },
+          {
+            id: 'MOV-201',
+            date: '12/10/2026 19:00',
+            type: 'SPEND',
+            points: -8,
+            title: 'Canje de Plato en Tienda',
+            detail: 'Te Afrutado Taza (Cupón SHIMA-1088-OK)',
+            code: 'SHIMA-1088-OK',
+            dish: 'Te Afrutado Taza'
+          }
         ]
       },
       '74156527': {
@@ -535,13 +636,42 @@
         phone: '965432109',
         email: 'adrianbarranzuela0108@gmail.com',
         points: 35,
-        historicPoints: 80,
+        historicPoints: 62,
+        pointsSpent: 27,
         visits: 8,
         cycle: 2,
         lastVisitDate: '2026-10-22',
-        history: [
-          { date: '22/10/2026', amount: 110, pointsAdded: 8, note: 'Chaufa Shimaya + Maki 1 Tabla' },
-          { date: '14/10/2026', amount: 95, pointsAdded: 7, note: 'Chasu Ramen M + Ebi Furai' }
+        movements: [
+          {
+            id: 'MOV-303',
+            date: '22/10/2026 21:00',
+            type: 'EARN',
+            points: 8,
+            title: 'Consumo Boleta B001-4770',
+            detail: 'Chaufa Shimaya + Maki 1 Tabla (Consumo S/ 110.00)',
+            stationAdvanced: true,
+            stationNum: 8
+          },
+          {
+            id: 'MOV-302',
+            date: '20/10/2026 20:15',
+            type: 'SPEND',
+            points: -27,
+            title: 'Canje de Plato en Tienda',
+            detail: 'Maki Acevichado 1 Tabla (Cupón SHIMA-7721-OK)',
+            code: 'SHIMA-7721-OK',
+            dish: 'Maki Acevichado 1 Tabla'
+          },
+          {
+            id: 'MOV-301',
+            date: '14/10/2026 14:20',
+            type: 'EARN',
+            points: 7,
+            title: 'Consumo Boleta B001-4200',
+            detail: 'Chasu Ramen M + Ebi Furai (Consumo S/ 95.00)',
+            stationAdvanced: true,
+            stationNum: 7
+          }
         ]
       }
     };
@@ -566,6 +696,7 @@
     }
 
     let activeClient = null;
+    let currentMovementFilter = 'all';
 
     const CLIENT_STORE_ITEMS = [
       { id: 'te_jazmin', cat: 'bebidas', name: 'Te De Jazmin Taza', desc: 'JUGOS • Sugerencia preliminar', pts: 5, sol: 'S/ 5.00', icon: '🍵', tag: '~S/ 83 en compras' },
@@ -637,10 +768,22 @@
           email: '',
           points: 1, // Bono de bienvenida
           historicPoints: 1,
+          pointsSpent: 0,
           visits: 1,
           cycle: 1,
           lastVisitDate: null,
-          history: [{ date: 'Hoy', amount: 0, pointsAdded: 1, note: 'Bono de bienvenida Club Shimaya' }]
+          movements: [
+            {
+              id: 'MOV-' + Date.now(),
+              date: new Date().toLocaleDateString('es-PE'),
+              type: 'EARN',
+              points: 1,
+              title: 'Bono de Bienvenida',
+              detail: 'Registro en el Club Shimaya Ramen',
+              stationAdvanced: true,
+              stationNum: 1
+            }
+          ]
         };
         saveClientsDB(db);
       }
@@ -676,6 +819,7 @@
       document.getElementById('clientSolesEquiv').textContent = (activeClient.points * 1.0).toFixed(2);
       document.getElementById('storePointsAvailable').textContent = activeClient.points;
       document.getElementById('clientVisits').textContent = activeClient.visits;
+      document.getElementById('movementUserDni').textContent = activeClient.dni;
 
       const cycle = activeClient.cycle || 1;
       document.getElementById('clientCycleText').textContent = cycle >= 2 ? `Ciclo ${cycle} (SENSEI VIP 1.2x)` : `Ciclo ${cycle} (Regular)`;
@@ -694,7 +838,7 @@
 
       renderClientTrail();
       renderClientStore();
-      renderClientHistory();
+      renderClientMovements();
     }
 
     function renderClientTrail() {
@@ -831,10 +975,49 @@
       if (activeClient.points < pts) return;
 
       activeClient.points -= pts;
+      activeClient.pointsSpent = (activeClient.pointsSpent || 0) + pts;
       
+      const randomCode = 'SHIMA-' + Math.floor(1000 + Math.random() * 9000) + '-OK';
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('es-PE') + ' ' + now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+
+      // Registro automático en el historial de movimientos del comensal
+      if (!activeClient.movements) activeClient.movements = [];
+      activeClient.movements.unshift({
+        id: 'MOV-' + Date.now(),
+        date: dateStr,
+        type: 'SPEND',
+        points: -pts,
+        title: 'Canje de Plato en Tienda',
+        detail: `${name} (Cupón ${randomCode})`,
+        code: randomCode,
+        dish: name,
+        status: 'DISPONIBLE'
+      });
+
+      // Guardar en la base de clientes
       const db = getClientsDB();
       db[activeClient.dni] = activeClient;
       saveClientsDB(db);
+
+      // Registrar también en la base global de canjes para el Panel Maestro
+      try {
+        let redemptions = JSON.parse(localStorage.getItem(REDEMPTIONS_KEY) || '[]');
+        redemptions.unshift({
+          code: randomCode,
+          dni: activeClient.dni,
+          clientName: activeClient.name,
+          dish: name,
+          points: pts,
+          solesValue: pts * 1.0,
+          date: dateStr,
+          status: 'DISPONIBLE',
+          redeemedAt: null
+        });
+        localStorage.setItem(REDEMPTIONS_KEY, JSON.stringify(redemptions));
+      } catch (e) {
+        console.warn('Error saving global redemption:', e);
+      }
 
       renderClientDashboard();
 
@@ -844,7 +1027,6 @@
         origin: { y: 0.6 }
       });
 
-      const randomCode = 'SHIMA-' + Math.floor(1000 + Math.random() * 9000) + '-OK';
       openVoucher(name, randomCode);
     }
 
@@ -870,27 +1052,117 @@
       document.getElementById('voucherModal').classList.add('hidden');
     }
 
-    function renderClientHistory() {
-      const tbody = document.getElementById('clientHistoryBody');
-      const list = activeClient.history || [];
+    // =========================================================================
+    // RENDERIZADO DE "MIS MOVIMIENTOS" (ESTADO DE CUENTA COMPLETO)
+    // =========================================================================
+    function filterMovements(type) {
+      currentMovementFilter = type;
+      document.querySelectorAll('.mov-filter').forEach(btn => {
+        btn.classList.remove('bg-amber-500', 'text-stone-950', 'active');
+        btn.classList.add('bg-stone-900', 'text-stone-300');
+      });
+      event.target.classList.remove('bg-stone-900', 'text-stone-300');
+      event.target.classList.add('bg-amber-500', 'text-stone-950', 'active');
+      renderClientMovements();
+    }
 
-      if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="py-3 text-center text-stone-500">Sin consumos registrados aún.</td></tr>';
+    function renderClientMovements() {
+      if (!activeClient) return;
+
+      const movements = activeClient.movements || [];
+      const container = document.getElementById('movementsTimelineContainer');
+
+      // Calcular totales
+      const earned = movements.filter(m => m.points > 0).reduce((acc, m) => acc + m.points, 0);
+      const spent = movements.filter(m => m.points < 0).reduce((acc, m) => acc + Math.abs(m.points), 0);
+
+      document.getElementById('movStatAvailable').textContent = `${activeClient.points} pts`;
+      document.getElementById('movStatEarned').textContent = `+${earned || activeClient.historicPoints || 0} pts`;
+      document.getElementById('movStatSpent').textContent = `-${spent || activeClient.pointsSpent || 0} pts`;
+      document.getElementById('movStatVisits').textContent = `${activeClient.visits} Visitas`;
+
+      let filtered = movements;
+      if (currentMovementFilter === 'EARN') {
+        filtered = movements.filter(m => m.type === 'EARN' || m.points > 0);
+      } else if (currentMovementFilter === 'SPEND') {
+        filtered = movements.filter(m => m.type === 'SPEND' || m.points < 0);
+      } else if (currentMovementFilter === 'VISIT') {
+        filtered = movements.filter(m => m.stationAdvanced || m.type === 'VISIT');
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="p-6 text-center text-stone-500 text-xs">
+            <i class="fa-solid fa-receipt text-2xl mb-1 text-stone-600 block"></i>
+            No se encontraron movimientos en este filtro.
+          </div>
+        `;
         return;
       }
 
-      tbody.innerHTML = list.map(item => `
-        <tr class="hover:bg-stone-900/40">
-          <td class="py-2.5 px-3 text-stone-300">${item.date}</td>
-          <td class="py-2.5 px-3 text-white font-sans font-medium">${item.note}</td>
-          <td class="py-2.5 px-3 text-right text-stone-300">S/ ${(item.amount || 0).toFixed(2)}</td>
-          <td class="py-2.5 px-3 text-right text-amber-400 font-bold">+${item.pointsAdded} Pts</td>
-        </tr>
-      `).join('');
+      container.innerHTML = filtered.map(item => {
+        const isEarn = item.points > 0;
+        const isSpend = item.points < 0;
+        const hasStation = item.stationAdvanced;
+
+        let iconBg = 'bg-stone-800 text-stone-400 border-stone-700';
+        let badgeColor = 'text-stone-300';
+        let iconText = '🧾';
+
+        if (isEarn) {
+          iconBg = 'bg-emerald-950/80 text-emerald-400 border-emerald-800';
+          badgeColor = 'text-emerald-400';
+          iconText = '💰';
+        } else if (isSpend) {
+          iconBg = 'bg-rose-950/80 text-rose-400 border-rose-800';
+          badgeColor = 'text-rose-400';
+          iconText = '🎁';
+        }
+
+        return `
+          <div class="bg-stone-900/90 rounded-2xl p-3.5 sm:p-4 border border-stone-800 flex items-start justify-between gap-3 hover:border-stone-700 transition">
+            
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl border flex items-center justify-center text-lg flex-shrink-0 ${iconBg}">
+                ${iconText}
+              </div>
+
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h4 class="font-extrabold text-xs sm:text-sm text-white">${item.title}</h4>
+                  ${hasStation ? `
+                    <span class="text-[9px] bg-amber-500/20 text-amber-300 font-extrabold px-2 py-0.5 rounded-full border border-amber-500/30">
+                      🏮 Avanzó Estación #${item.stationNum || activeClient.visits}
+                    </span>
+                  ` : ''}
+                </div>
+
+                <p class="text-stone-300 text-xs mt-0.5 leading-relaxed">${item.detail}</p>
+                
+                <div class="flex items-center gap-2 mt-1.5 text-[10px] text-stone-500 font-mono">
+                  <span><i class="fa-regular fa-calendar mr-1"></i>${item.date}</span>
+                  ${item.code ? `<span>• Código: <strong class="text-amber-400">${item.code}</strong></span>` : ''}
+                </div>
+              </div>
+            </div>
+
+            <!-- Puntos Badge -->
+            <div class="text-right flex-shrink-0">
+              <span class="text-sm sm:text-base font-black font-mono ${badgeColor}">
+                ${item.points > 0 ? '+' + item.points : item.points} PTS
+              </span>
+              <span class="text-[9px] text-stone-500 block uppercase font-bold">
+                ${isEarn ? 'Sumado (+)' : (isSpend ? 'Canjeado (-)' : 'Visita')}
+              </span>
+            </div>
+
+          </div>
+        `;
+      }).join('');
     }
 
     function switchTab(tab) {
-      ['tienda', 'caminito', 'boletas', 'comofunciona'].forEach(t => {
+      ['tienda', 'caminito', 'movimientos', 'comofunciona'].forEach(t => {
         const c = document.getElementById(`content-${t}`);
         const b = document.getElementById(`tab-${t}`);
         if (c) c.classList.add('hidden');

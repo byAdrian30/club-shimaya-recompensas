@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Maestro | Club Shimaya Ramen - Regulación de Clientes</title>
+  <title>Panel Maestro | Club Shimaya Ramen - Dashboard de Canjes y Clientes</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -57,13 +57,13 @@
       </div>
       <h2 class="text-2xl font-black text-white">Panel Maestro</h2>
       <p class="text-xs text-stone-400 mt-1 mb-5">
-        Regulación y Control de Clientes • Club Shimaya Ramen
+        Dashboard de Canjes, Puntos y Regulación de Clientes
       </p>
 
       <form onsubmit="handleAdminLogin(event)" class="space-y-4">
         <div>
           <label class="text-[11px] font-extrabold uppercase tracking-wider text-amber-400 block mb-1 text-left">
-            PIN o Clave de Acceso Maestro:
+            PIN de Acceso Maestro:
           </label>
           <input 
             type="password" 
@@ -77,7 +77,7 @@
         <button 
           type="submit" 
           class="w-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 hover:from-amber-500 hover:to-amber-300 text-stone-950 font-black text-sm py-3.5 rounded-xl shadow-lg transition active:scale-98">
-          <i class="fa-solid fa-lock-open mr-1.5"></i> Ingresar al Panel Maestro
+          <i class="fa-solid fa-lock-open mr-1.5"></i> Ingresar al Dashboard Maestro
         </button>
 
         <div class="pt-2 text-center">
@@ -101,15 +101,15 @@
         <div>
           <div class="flex items-center space-x-2">
             <span class="font-black text-lg sm:text-xl tracking-tight text-white">SHIMAYA</span>
-            <span class="text-[10px] bg-amber-500 text-stone-950 font-black px-2 py-0.5 rounded-full uppercase">Control Maestro</span>
+            <span class="text-[10px] bg-amber-500 text-stone-950 font-black px-2 py-0.5 rounded-full uppercase">Dashboard Maestro</span>
           </div>
-          <p class="text-[11px] text-stone-400 font-medium">Gestión de Clientes, Puntos y Catálogo</p>
+          <p class="text-[11px] text-stone-400 font-medium">Control Central de Canjes, Puntos y Clientes</p>
         </div>
       </div>
 
       <!-- Quick Actions in Header -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <a href="/" target="_blank" class="text-xs bg-stone-800 hover:bg-stone-700 text-amber-300 border border-stone-700 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition" title="Abrir la vista que ven los clientes">
+        <a href="/" target="_blank" class="text-xs bg-stone-800 hover:bg-stone-700 text-amber-300 border border-stone-700 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition" title="Abrir la vista del cliente">
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
           <span class="hidden md:inline">Ver Portal</span> Cliente
         </a>
@@ -130,133 +130,272 @@
   <!-- ================================================================= -->
   <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-    <!-- TOP KPI METRICS BAR -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+    <!-- KPI METRICS BAR: CANJES, PUNTOS Y CLIENTES -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
       
+      <!-- Total Canjes Realizados -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 border-amber-500/40 glow-gold">
+        <div class="flex items-center justify-between text-amber-400 mb-1">
+          <span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider">Total Canjes</span>
+          <i class="fa-solid fa-gift text-amber-400 text-base"></i>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-white" id="statTotalRedemptions">0</div>
+        <p class="text-[10px] text-amber-300 font-semibold mt-1">Platos y premios canjeados</p>
+      </div>
+
+      <!-- Puntos Gastados en Canjes -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
+        <div class="flex items-center justify-between text-rose-400 mb-1">
+          <span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider">Puntos Canjeados</span>
+          <i class="fa-solid fa-fire text-rose-400 text-base"></i>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-white flex items-baseline gap-1">
+          <span id="statPointsSpent">0</span>
+          <span class="text-xs text-rose-400 font-bold">PTS</span>
+        </div>
+        <p class="text-[10px] text-stone-400 mt-1">Equiv. a S/ <span id="statSpentSoles">0.00</span> en carta</p>
+      </div>
+
+      <!-- Puntos Activos en Cartera -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
+        <div class="flex items-center justify-between text-emerald-400 mb-1">
+          <span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider">Puntos en Cartera</span>
+          <i class="fa-solid fa-wallet text-emerald-400 text-base"></i>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-white flex items-baseline gap-1">
+          <span id="statActivePoints">0</span>
+          <span class="text-xs text-emerald-400 font-bold">PTS</span>
+        </div>
+        <p class="text-[10px] text-stone-400 mt-1">Saldo disponible para gastar</p>
+      </div>
+
       <!-- Total Clientes -->
       <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
         <div class="flex items-center justify-between text-stone-400 mb-1">
-          <span class="text-[11px] font-extrabold uppercase tracking-wider">Total Clientes</span>
-          <i class="fa-solid fa-users text-amber-400 text-base"></i>
+          <span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider">Total Clientes</span>
+          <i class="fa-solid fa-users text-stone-400 text-base"></i>
         </div>
         <div class="text-2xl sm:text-3xl font-black text-white" id="statTotalClients">0</div>
         <p class="text-[10px] text-stone-400 mt-1">Registrados con DNI nominal</p>
       </div>
 
-      <!-- Puntos en Circulación -->
-      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
-        <div class="flex items-center justify-between text-amber-400 mb-1">
-          <span class="text-[11px] font-extrabold uppercase tracking-wider">Puntos Activos</span>
-          <i class="fa-solid fa-coins text-amber-400 text-base"></i>
-        </div>
-        <div class="text-2xl sm:text-3xl font-black text-white flex items-baseline gap-1">
-          <span id="statTotalPoints">0</span>
-          <span class="text-xs text-amber-400 font-bold">PTS</span>
-        </div>
-        <p class="text-[10px] text-amber-300 font-semibold mt-1">Equiv. a S/ <span id="statPointsSoles">0.00</span> en carta</p>
-      </div>
-
-      <!-- Visitas Acumuladas -->
-      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
-        <div class="flex items-center justify-between text-rose-400 mb-1">
-          <span class="text-[11px] font-extrabold uppercase tracking-wider">Visitas en Ruta</span>
-          <i class="fa-solid fa-map-pin text-rose-400 text-base"></i>
-        </div>
-        <div class="text-2xl sm:text-3xl font-black text-white" id="statTotalVisits">0</div>
-        <p class="text-[10px] text-stone-400 mt-1">Hitos completados en sala</p>
-      </div>
-
       <!-- Clientes VIP Sensei -->
-      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800">
-        <div class="flex items-center justify-between text-emerald-400 mb-1">
-          <span class="text-[11px] font-extrabold uppercase tracking-wider">Nivel Sensei VIP</span>
-          <i class="fa-solid fa-crown text-emerald-400 text-base"></i>
+      <div class="glass-card rounded-2xl p-4 sm:p-5 border-stone-800 col-span-2 md:col-span-1">
+        <div class="flex items-center justify-between text-sky-400 mb-1">
+          <span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider">VIP Sensei</span>
+          <i class="fa-solid fa-crown text-sky-400 text-base"></i>
         </div>
         <div class="text-2xl sm:text-3xl font-black text-white" id="statVipClients">0</div>
-        <p class="text-[10px] text-emerald-400/90 font-semibold mt-1">Multiplicador 1.2x activado</p>
+        <p class="text-[10px] text-sky-400 font-semibold mt-1">Multiplicador 1.2x</p>
       </div>
 
     </div>
 
-    <!-- ACTION CONTROLS & SEARCH BAR -->
-    <div class="glass-card rounded-3xl p-4 sm:p-5 border-stone-800 space-y-4">
+    <!-- MAIN ADMIN TABS -->
+    <div class="flex border-b border-stone-800 gap-2 overflow-x-auto custom-scroll pb-1">
+      <button onclick="switchAdminTab('canjes')" id="tab-adm-canjes" class="px-4 py-2.5 text-xs sm:text-sm font-black text-amber-400 border-b-2 border-amber-500 flex items-center gap-2 whitespace-nowrap transition">
+        <i class="fa-solid fa-chart-pie text-amber-400"></i>
+        <span>Dashboard de Canjes</span>
+        <span class="bg-amber-500 text-stone-950 text-[10px] font-black px-1.5 py-0.5 rounded-full" id="tabBadgeCanjesCount">0</span>
+      </button>
+
+      <button onclick="switchAdminTab('clientes')" id="tab-adm-clientes" class="px-4 py-2.5 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition">
+        <i class="fa-solid fa-users"></i>
+        <span>Regulación de Clientes</span>
+      </button>
+
+      <button onclick="switchAdminTab('auditoria')" id="tab-adm-auditoria" class="px-4 py-2.5 text-xs sm:text-sm font-medium text-stone-400 hover:text-stone-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Auditoría de Movimientos</span>
+      </button>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 1: DASHBOARD DE CANJES & RECOMPENSAS -->
+    <!-- ================================================================= -->
+    <div id="content-adm-canjes" class="space-y-6">
       
-      <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
-        
-        <!-- Search Input -->
-        <div class="relative flex-grow max-w-md">
-          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </span>
-          <input 
-            type="text" 
-            id="searchInput" 
-            placeholder="Buscar por DNI, Nombre o Teléfono..." 
-            oninput="renderClientsTable()" 
-            class="w-full pl-10 pr-4 py-2.5 bg-stone-900 border border-stone-700 rounded-xl text-sm text-white placeholder-stone-500 focus:outline-none focus:border-amber-500"
-          >
-        </div>
-
-        <!-- Filter Pill Buttons -->
-        <div class="flex items-center gap-1.5 overflow-x-auto custom-scroll pb-1 lg:pb-0">
-          <button onclick="setFilter('all')" id="btnFilterAll" class="filter-btn active text-xs font-bold px-3 py-2 rounded-xl bg-amber-500 text-stone-950 transition">Todos</button>
-          <button onclick="setFilter('regular')" id="btnFilterRegular" class="filter-btn text-xs font-semibold px-3 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-700 transition">Regular</button>
-          <button onclick="setFilter('vip')" id="btnFilterVip" class="filter-btn text-xs font-semibold px-3 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-700 transition">Sensei VIP</button>
-        </div>
-
-        <!-- Main Action Buttons -->
-        <div class="flex flex-wrap items-center gap-2">
-          <button onclick="openNewClientModal()" class="bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-stone-950 font-black text-xs px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5">
-            <i class="fa-solid fa-user-plus"></i> Nuevo Cliente
-          </button>
-          <button onclick="openPosModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5">
-            <i class="fa-solid fa-receipt"></i> Emitir Boleta POS
-          </button>
-          <button onclick="openVoucherValidatorModal()" class="bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5">
+      <!-- Ranking de Platos Más Canjeados -->
+      <div class="glass-card rounded-3xl p-5 sm:p-6 border-stone-800">
+        <div class="flex items-center justify-between pb-4 border-b border-stone-800">
+          <div>
+            <h3 class="text-lg font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-bowl-food text-amber-400"></i> Platos Más Canjeados por los Clientes
+            </h3>
+            <p class="text-xs text-stone-400 mt-0.5">Popularidad de recompensas redimidas en salón</p>
+          </div>
+          <button onclick="openVoucherValidatorModal()" class="text-xs bg-amber-500 hover:bg-amber-400 text-stone-950 font-black px-3.5 py-1.5 rounded-xl shadow transition flex items-center gap-1.5">
             <i class="fa-solid fa-qrcode"></i> Validar Cupón QR
           </button>
-          <button onclick="exportClientsCsv()" class="bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 font-bold text-xs px-3 py-2.5 rounded-xl transition flex items-center gap-1.5" title="Exportar base en CSV">
-            <i class="fa-solid fa-file-export"></i> CSV
-          </button>
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4" id="rankingDishesContainer">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+
+      <!-- Tabla Maestra de Canjes & Vouchers -->
+      <div class="glass-card rounded-3xl overflow-hidden border-stone-800 shadow-xl">
+        <div class="p-4 sm:p-5 border-b border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="text-base font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-receipt text-rose-400"></i> Registro Histórico de Canjes
+            </h3>
+            <p class="text-xs text-stone-400 mt-0.5">Cupones emitidos y validados en mesa</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-stone-400">Filtrar:</span>
+            <select id="filterCanjesState" onchange="renderRedemptionsTable()" class="bg-stone-900 border border-stone-700 text-white rounded-xl px-2.5 py-1 text-xs font-semibold focus:outline-none">
+              <option value="all">Todos los Canjes</option>
+              <option value="CANJEADO">Canjeados en Caja ✓</option>
+              <option value="DISPONIBLE">Disponibles / Pendientes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-stone-800 bg-stone-900/80 text-stone-400 font-extrabold uppercase tracking-wider text-[10px]">
+                <th class="py-3 px-4">Código Cupón</th>
+                <th class="py-3 px-4">Fecha y Hora</th>
+                <th class="py-3 px-4">Cliente (DNI)</th>
+                <th class="py-3 px-4">Plato Canjeado</th>
+                <th class="py-3 px-4 text-right">Puntos / Valor</th>
+                <th class="py-3 px-4 text-center">Estado</th>
+                <th class="py-3 px-4 text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="redemptionsTableBody" class="divide-y divide-stone-800/60 font-mono">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="emptyRedemptionsMessage" class="hidden p-8 text-center text-stone-500 text-xs">
+          <i class="fa-solid fa-ticket text-2xl mb-2 text-stone-600 block"></i>
+          No hay canjes registrados con este filtro.
+        </div>
       </div>
 
     </div>
 
-    <!-- CLIENTS MASTER DATA TABLE -->
-    <div class="glass-card rounded-3xl overflow-hidden border-stone-800 shadow-xl">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead>
-            <tr class="border-b border-stone-800 bg-stone-900/80 text-stone-400 font-extrabold uppercase tracking-wider text-[10px]">
-              <th class="py-3 px-4">DNI</th>
-              <th class="py-3 px-4">Cliente / Contacto</th>
-              <th class="py-3 px-4">Puntos Disponibles</th>
-              <th class="py-3 px-4">Estación en Ruta</th>
-              <th class="py-3 px-4">Nivel / Ciclo</th>
-              <th class="py-3 px-4">Última Visita</th>
-              <th class="py-3 px-4 text-center">Acciones Maestras</th>
-            </tr>
-          </thead>
-          <tbody id="clientsTableBody" class="divide-y divide-stone-800/60 font-mono">
-            <!-- Dynamically populated via JS -->
-          </tbody>
-        </table>
+    <!-- ================================================================= -->
+    <!-- TAB 2: LISTADO Y REGULACIÓN DE CLIENTES -->
+    <!-- ================================================================= -->
+    <div id="content-adm-clientes" class="hidden space-y-6">
+      
+      <!-- CONTROLS & SEARCH BAR -->
+      <div class="glass-card rounded-3xl p-4 sm:p-5 border-stone-800 space-y-4">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+          
+          <div class="relative flex-grow max-w-md">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="Buscar por DNI, Nombre o Teléfono..." 
+              oninput="renderClientsTable()" 
+              class="w-full pl-10 pr-4 py-2.5 bg-stone-900 border border-stone-700 rounded-xl text-sm text-white placeholder-stone-500 focus:outline-none focus:border-amber-500"
+            >
+          </div>
+
+          <div class="flex items-center gap-1.5 overflow-x-auto custom-scroll pb-1 lg:pb-0">
+            <button onclick="setFilter('all')" id="btnFilterAll" class="filter-btn active text-xs font-bold px-3 py-2 rounded-xl bg-amber-500 text-stone-950 transition">Todos</button>
+            <button onclick="setFilter('regular')" id="btnFilterRegular" class="filter-btn text-xs font-semibold px-3 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-700 transition">Regular</button>
+            <button onclick="setFilter('vip')" id="btnFilterVip" class="filter-btn text-xs font-semibold px-3 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 border border-stone-700 transition">Sensei VIP</button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="openNewClientModal()" class="bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 text-stone-950 font-black text-xs px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-user-plus"></i> Nuevo Cliente
+            </button>
+            <button onclick="openPosModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-receipt"></i> Emitir Boleta POS
+            </button>
+            <button onclick="exportClientsCsv()" class="bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 font-bold text-xs px-3 py-2.5 rounded-xl transition flex items-center gap-1.5">
+              <i class="fa-solid fa-file-export"></i> CSV
+            </button>
+          </div>
+
+        </div>
       </div>
 
-      <!-- Empty State -->
-      <div id="emptyTableMessage" class="hidden p-8 text-center text-stone-500 text-xs">
-        <i class="fa-solid fa-user-slash text-2xl mb-2 text-stone-600 block"></i>
-        No se encontraron clientes con el criterio de búsqueda.
+      <!-- CLIENTS MASTER DATA TABLE -->
+      <div class="glass-card rounded-3xl overflow-hidden border-stone-800 shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-stone-800 bg-stone-900/80 text-stone-400 font-extrabold uppercase tracking-wider text-[10px]">
+                <th class="py-3 px-4">DNI</th>
+                <th class="py-3 px-4">Cliente / Contacto</th>
+                <th class="py-3 px-4">Saldo Puntos</th>
+                <th class="py-3 px-4">Estación en Ruta</th>
+                <th class="py-3 px-4">Nivel / Ciclo</th>
+                <th class="py-3 px-4">Última Visita</th>
+                <th class="py-3 px-4 text-center">Acciones Maestras</th>
+              </tr>
+            </thead>
+            <tbody id="clientsTableBody" class="divide-y divide-stone-800/60 font-mono">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="emptyTableMessage" class="hidden p-8 text-center text-stone-500 text-xs">
+          <i class="fa-solid fa-user-slash text-2xl mb-2 text-stone-600 block"></i>
+          No se encontraron clientes con el criterio de búsqueda.
+        </div>
       </div>
+
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: AUDITORÍA DE MOVIMIENTOS GLOBAL -->
+    <!-- ================================================================= -->
+    <div id="content-adm-auditoria" class="hidden space-y-6">
+      
+      <div class="glass-card rounded-3xl overflow-hidden border-stone-800 shadow-xl">
+        <div class="p-4 sm:p-5 border-b border-stone-800 flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-black text-white flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-sky-400"></i> Libro Mayor de Movimientos (Auditoría Global)
+            </h3>
+            <p class="text-xs text-stone-400 mt-0.5">
+              Trazabilidad completa: qué día sumó puntos quién, en qué boleta, qué día gastó y en qué plato.
+            </p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-stone-800 bg-stone-900/80 text-stone-400 font-extrabold uppercase tracking-wider text-[10px]">
+                <th class="py-3 px-4">Fecha y Hora</th>
+                <th class="py-3 px-4">Cliente (DNI)</th>
+                <th class="py-3 px-4">Tipo Movimiento</th>
+                <th class="py-3 px-4">Detalle / Comprobante</th>
+                <th class="py-3 px-4 text-right">Variación Puntos</th>
+              </tr>
+            </thead>
+            <tbody id="globalAuditTableBody" class="divide-y divide-stone-800/60 font-mono">
+              <!-- Dynamically populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
 
   </main>
 
   <!-- ================================================================= -->
-  <!-- MODAL 1: EDITAR CLIENTE COMPLETO -->
+  <!-- MODALES DE CONTROL -->
   <!-- ================================================================= -->
+
+  <!-- MODAL EDITAR CLIENTE -->
   <div id="modalEditClient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
     <div class="glass-card rounded-3xl max-w-lg w-full p-6 border-amber-500/40 shadow-2xl relative">
       <button onclick="closeModal('modalEditClient')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
@@ -329,9 +468,7 @@
     </div>
   </div>
 
-  <!-- ================================================================= -->
-  <!-- MODAL 2: NUEVO CLIENTE MANUAL -->
-  <!-- ================================================================= -->
+  <!-- MODAL NUEVO CLIENTE -->
   <div id="modalNewClient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
     <div class="glass-card rounded-3xl max-w-md w-full p-6 border-amber-500/40 shadow-2xl relative">
       <button onclick="closeModal('modalNewClient')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
@@ -382,9 +519,7 @@
     </div>
   </div>
 
-  <!-- ================================================================= -->
-  <!-- MODAL 3: AJUSTE RÁPIDO DE PUNTOS -->
-  <!-- ================================================================= -->
+  <!-- MODAL AJUSTE RÁPIDO DE PUNTOS -->
   <div id="modalAdjustPoints" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
     <div class="glass-card rounded-3xl max-w-sm w-full p-5 border-amber-500/40 shadow-2xl relative">
       <button onclick="closeModal('modalAdjustPoints')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
@@ -436,9 +571,7 @@
     </div>
   </div>
 
-  <!-- ================================================================= -->
-  <!-- MODAL 4: EMITIR BOLETA POS (CAJERO / MASTER) -->
-  <!-- ================================================================= -->
+  <!-- MODAL EMITIR BOLETA POS -->
   <div id="modalPosSale" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
     <div class="glass-card rounded-3xl max-w-sm w-full p-5 border-emerald-500/40 shadow-2xl relative">
       <button onclick="closeModal('modalPosSale')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
@@ -491,9 +624,7 @@
     </div>
   </div>
 
-  <!-- ================================================================= -->
-  <!-- MODAL 5: VALIDAR CUPÓN QR DEL CLIENTE -->
-  <!-- ================================================================= -->
+  <!-- MODAL VALIDAR CUPÓN QR -->
   <div id="modalVoucherValidator" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
     <div class="glass-card rounded-3xl max-w-sm w-full p-5 border-sky-500/40 shadow-2xl relative">
       <button onclick="closeModal('modalVoucherValidator')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
@@ -506,13 +637,13 @@
         </div>
         <div>
           <h4 class="text-sm font-black text-white">Validar Cupón de Mesa</h4>
-          <p class="text-[10px] text-stone-400">Verifica la autenticidad del código mostrado por el cliente</p>
+          <p class="text-[10px] text-stone-400">Verifica y redime el código presentado por el comensal</p>
         </div>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="text-[11px] text-stone-300 font-semibold block mb-1">Código del Cupón (ej. SHIMA-8921-OK):</label>
+          <label class="text-[11px] text-stone-300 font-semibold block mb-1">Código del Cupón (ej. SHIMA-8412-OK):</label>
           <input type="text" id="voucherCodeInput" placeholder="SHIMA-..." class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-amber-300 font-mono font-bold uppercase focus:outline-none focus:border-sky-500">
         </div>
 
@@ -525,9 +656,7 @@
     </div>
   </div>
 
-  <!-- ================================================================= -->
-  <!-- MODAL 6: SUPABASE CONFIG -->
-  <!-- ================================================================= -->
+  <!-- MODAL SUPABASE -->
   <div id="modalSupabase" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
     <div class="glass-card rounded-3xl max-w-md w-full p-6 border-sky-500/40 shadow-2xl relative">
       <button onclick="closeModal('modalSupabase')" class="absolute top-4 right-4 text-stone-400 hover:text-white">
@@ -570,57 +699,66 @@
   <!-- SCRIPT -->
   <script>
     const STORAGE_KEY = 'shimaya_clients_db';
+    const REDEMPTIONS_KEY = 'shimaya_redemptions_db';
     const MASTER_PIN = '74156527';
 
-    const DEFAULT_CLIENTS = {
-      '74829103': {
-        name: 'Marco Ramos',
+    const DEFAULT_REDEMPTIONS = [
+      {
+        code: 'SHIMA-8412-OK',
         dni: '74829103',
-        phone: '987654321',
-        email: 'marco.ramos@gmail.com',
-        points: 22,
-        historicPoints: 45,
-        visits: 5,
-        cycle: 1,
-        lastVisitDate: '2026-10-24',
-        history: [
-          { date: '24/10/2026', amount: 80, pointsAdded: 5, note: 'Ramen Tonkotsu S + Té Afrutado' },
-          { date: '18/10/2026', amount: 120, pointsAdded: 7, note: 'Maki Acevichado + Age Gyozas x 6' },
-          { date: '05/10/2026', amount: 65, pointsAdded: 4, note: 'Chasu Ramen S + Soda Frutos' },
-          { date: '25/09/2026', amount: 70, pointsAdded: 4, note: 'Batayaki Ramen + Puchi Kurimu' },
-          { date: '10/09/2026', amount: 50, pointsAdded: 3, note: 'Tonkotsu Ramen S' }
-        ]
+        clientName: 'Marco Ramos',
+        dish: 'Age Gyozas x 6 und.',
+        points: 20,
+        solesValue: 20.00,
+        date: '22/10/2026 20:30',
+        status: 'CANJEADO',
+        redeemedAt: '22/10/2026 20:45'
       },
-      '45102938': {
-        name: 'Lucía Mendoza',
-        dni: '45102938',
-        phone: '976543210',
-        email: 'lucia.mendoza@hotmail.com',
-        points: 4,
-        historicPoints: 12,
-        visits: 1,
-        cycle: 1,
-        lastVisitDate: '2026-10-20',
-        history: [
-          { date: '20/10/2026', amount: 85, pointsAdded: 4, note: 'Chasu Ramen S + Bebida' }
-        ]
+      {
+        code: 'SHIMA-3109-OK',
+        dni: '74829103',
+        clientName: 'Marco Ramos',
+        dish: 'Chasu Ramen S',
+        points: 25,
+        solesValue: 25.00,
+        date: '15/10/2026 19:10',
+        status: 'CANJEADO',
+        redeemedAt: '15/10/2026 19:30'
       },
-      '74156527': {
-        name: 'Adrian Smith',
+      {
+        code: 'SHIMA-7721-OK',
         dni: '74156527',
-        phone: '965432109',
-        email: 'adrianbarranzuela0108@gmail.com',
-        points: 35,
-        historicPoints: 80,
-        visits: 8,
-        cycle: 2,
-        lastVisitDate: '2026-10-22',
-        history: [
-          { date: '22/10/2026', amount: 110, pointsAdded: 8, note: 'Chaufa Shimaya + Maki 1 Tabla' },
-          { date: '14/10/2026', amount: 95, pointsAdded: 7, note: 'Chasu Ramen M + Ebi Furai' }
-        ]
+        clientName: 'Adrian Smith',
+        dish: 'Maki Acevichado 1 Tabla',
+        points: 27,
+        solesValue: 27.00,
+        date: '20/10/2026 20:15',
+        status: 'CANJEADO',
+        redeemedAt: '20/10/2026 20:30'
+      },
+      {
+        code: 'SHIMA-1088-OK',
+        dni: '45102938',
+        clientName: 'Lucía Mendoza',
+        dish: 'Te Afrutado Taza',
+        points: 8,
+        solesValue: 8.00,
+        date: '12/10/2026 19:00',
+        status: 'CANJEADO',
+        redeemedAt: '12/10/2026 19:15'
+      },
+      {
+        code: 'SHIMA-9124-OK',
+        dni: '74829103',
+        clientName: 'Marco Ramos',
+        dish: 'Puchi Kurimu',
+        points: 15,
+        solesValue: 15.00,
+        date: '26/10/2026 12:10',
+        status: 'DISPONIBLE',
+        redeemedAt: null
       }
-    };
+    ];
 
     function getDB() {
       try {
@@ -629,8 +767,7 @@
       } catch (e) {
         console.warn('Error reading db:', e);
       }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_CLIENTS));
-      return DEFAULT_CLIENTS;
+      return {};
     }
 
     function saveDB(db) {
@@ -641,9 +778,28 @@
       }
     }
 
+    function getRedemptions() {
+      try {
+        const stored = localStorage.getItem(REDEMPTIONS_KEY);
+        if (stored) return JSON.parse(stored);
+      } catch (e) {
+        console.warn('Error reading redemptions:', e);
+      }
+      localStorage.setItem(REDEMPTIONS_KEY, JSON.stringify(DEFAULT_REDEMPTIONS));
+      return DEFAULT_REDEMPTIONS;
+    }
+
+    function saveRedemptions(r) {
+      try {
+        localStorage.setItem(REDEMPTIONS_KEY, JSON.stringify(r));
+      } catch (e) {
+        console.warn('Error saving redemptions:', e);
+      }
+    }
+
     let currentFilter = 'all';
 
-    // 1. LOGIN GATE
+    // LOGIN GATE
     function checkAdminSession() {
       if (sessionStorage.getItem('shimaya_admin_logged') === 'true') {
         document.getElementById('adminLoginGate').classList.add('hidden');
@@ -658,7 +814,7 @@
       if (pin === MASTER_PIN || pin === 'admin') {
         sessionStorage.setItem('shimaya_admin_logged', 'true');
         document.getElementById('adminLoginGate').classList.add('hidden');
-        renderDashboard();
+        renderMasterData();
       } else {
         alert('PIN incorrecto. Ingrese el PIN del usuario maestro.');
       }
@@ -668,7 +824,7 @@
       document.getElementById('adminPinInput').value = MASTER_PIN;
       sessionStorage.setItem('shimaya_admin_logged', 'true');
       document.getElementById('adminLoginGate').classList.add('hidden');
-      renderDashboard();
+      renderMasterData();
     }
 
     function adminLogout() {
@@ -676,26 +832,132 @@
       location.reload();
     }
 
-    // 2. RENDER DASHBOARD & TABLE
-    function renderDashboard() {
+    // =========================================================================
+    // RENDER PRINCIPAL DEL DASHBOARD MAESTRO
+    // =========================================================================
+    function renderMasterData() {
       const db = getDB();
       const clients = Object.values(db);
+      const redemptions = getRedemptions();
 
-      // KPI Metrics
+      // Métricas KPI
       const totalClients = clients.length;
-      const totalPoints = clients.reduce((acc, c) => acc + (c.points || 0), 0);
+      const activePoints = clients.reduce((acc, c) => acc + (c.points || 0), 0);
       const totalVisits = clients.reduce((acc, c) => acc + (c.visits || 0), 0);
       const vipClients = clients.filter(c => (c.cycle || 1) >= 2).length;
 
-      document.getElementById('statTotalClients').textContent = totalClients;
-      document.getElementById('statTotalPoints').textContent = totalPoints;
-      document.getElementById('statPointsSoles').textContent = (totalPoints * 1.0).toFixed(2);
-      document.getElementById('statTotalVisits').textContent = totalVisits;
-      document.getElementById('statVipClients').textContent = vipClients;
+      const totalRedemptions = redemptions.length;
+      const pointsSpent = redemptions.reduce((acc, r) => acc + (r.points || 0), 0);
 
+      document.getElementById('statTotalRedemptions').textContent = totalRedemptions;
+      document.getElementById('statPointsSpent').textContent = pointsSpent;
+      document.getElementById('statSpentSoles').textContent = (pointsSpent * 1.0).toFixed(2);
+      document.getElementById('statActivePoints').textContent = activePoints;
+      document.getElementById('statTotalClients').textContent = totalClients;
+      document.getElementById('statVipClients').textContent = vipClients;
+      document.getElementById('tabBadgeCanjesCount').textContent = totalRedemptions;
+
+      renderDishRanking(redemptions);
+      renderRedemptionsTable();
       renderClientsTable();
+      renderGlobalAuditTable();
     }
 
+    // RANKING DE PLATOS MÁS CANJEADOS
+    function renderDishRanking(redemptions) {
+      const container = document.getElementById('rankingDishesContainer');
+      const counts = {};
+
+      redemptions.forEach(r => {
+        counts[r.dish] = (counts[r.dish] || 0) + 1;
+      });
+
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+      const maxCount = sorted.length > 0 ? sorted[0][1] : 1;
+
+      container.innerHTML = sorted.map(([dish, count]) => {
+        const pct = Math.round((count / maxCount) * 100);
+        return `
+          <div class="bg-stone-900/80 p-3.5 rounded-2xl border border-stone-800">
+            <div class="flex justify-between items-center text-xs mb-1.5">
+              <span class="font-extrabold text-white flex items-center gap-1.5">
+                <i class="fa-solid fa-gift text-amber-400"></i> ${dish}
+              </span>
+              <span class="font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                ${count} canje${count > 1 ? 's' : ''}
+              </span>
+            </div>
+            <div class="w-full bg-stone-800 rounded-full h-2 overflow-hidden">
+              <div class="bg-gradient-to-r from-amber-500 to-rose-600 h-2 rounded-full" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // TABLA DE CANJES / VOUCHERS
+    function renderRedemptionsTable() {
+      const redemptions = getRedemptions();
+      const filter = document.getElementById('filterCanjesState').value;
+      const tbody = document.getElementById('redemptionsTableBody');
+      const emptyMsg = document.getElementById('emptyRedemptionsMessage');
+
+      let list = redemptions;
+      if (filter !== 'all') {
+        list = list.filter(r => r.status === filter);
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = '';
+        emptyMsg.classList.remove('hidden');
+        return;
+      }
+
+      emptyMsg.classList.add('hidden');
+
+      tbody.innerHTML = list.map(r => {
+        const isRedeemed = r.status === 'CANJEADO';
+        return `
+          <tr class="hover:bg-stone-900/60 transition">
+            <td class="py-3 px-4 font-bold text-amber-400">
+              <span class="bg-stone-900 px-2 py-1 rounded-md border border-stone-800">${r.code}</span>
+            </td>
+            <td class="py-3 px-4 text-stone-300 font-sans text-xs">${r.date}</td>
+            <td class="py-3 px-4">
+              <div class="font-sans font-bold text-white text-xs">${r.clientName}</div>
+              <div class="text-[10px] text-stone-500 font-mono">DNI: ${r.dni}</div>
+            </td>
+            <td class="py-3 px-4 font-sans font-semibold text-stone-200">${r.dish}</td>
+            <td class="py-3 px-4 text-right">
+              <span class="text-rose-400 font-bold font-mono">-${r.points} pts</span>
+              <div class="text-[9px] text-stone-500">S/ ${(r.solesValue || r.points * 1.0).toFixed(2)}</div>
+            </td>
+            <td class="py-3 px-4 text-center">
+              ${isRedeemed ? `
+                <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                  Canjeado ✓
+                </span>
+              ` : `
+                <span class="bg-amber-950 text-amber-400 border border-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold animate-pulse">
+                  Disponible
+                </span>
+              `}
+            </td>
+            <td class="py-3 px-4 text-center">
+              ${!isRedeemed ? `
+                <button onclick="markVoucherRedeemed('${r.code}')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-sans font-bold text-[10px] transition">
+                  Canjear en Caja
+                </button>
+              ` : `
+                <span class="text-[10px] text-stone-500 font-sans">Aplicado</span>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // TABLA DE CLIENTES
     function setFilter(f) {
       currentFilter = f;
       document.querySelectorAll('.filter-btn').forEach(b => {
@@ -712,7 +974,7 @@
 
     function renderClientsTable() {
       const db = getDB();
-      const search = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+      const search = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
       const tbody = document.getElementById('clientsTableBody');
       const emptyMsg = document.getElementById('emptyTableMessage');
 
@@ -817,7 +1079,75 @@
       }).join('');
     }
 
-    // 3. MODAL CONTROLS
+    // TABLA DE AUDITORÍA GLOBAL
+    function renderGlobalAuditTable() {
+      const db = getDB();
+      const tbody = document.getElementById('globalAuditTableBody');
+      const allMovements = [];
+
+      Object.values(db).forEach(client => {
+        (client.movements || []).forEach(m => {
+          allMovements.push({
+            ...m,
+            clientDni: client.dni,
+            clientName: client.name
+          });
+        });
+      });
+
+      if (allMovements.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-stone-500">Sin movimientos registrados.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = allMovements.slice(0, 50).map(m => {
+        const isEarn = m.points > 0;
+        return `
+          <tr class="hover:bg-stone-900/60 transition">
+            <td class="py-2.5 px-4 text-stone-400 font-sans text-xs">${m.date}</td>
+            <td class="py-2.5 px-4 font-sans">
+              <strong class="text-white">${m.clientName}</strong>
+              <div class="text-[10px] text-stone-500 font-mono">DNI ${m.clientDni}</div>
+            </td>
+            <td class="py-2.5 px-4 font-sans">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isEarn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-rose-950 text-rose-400 border border-rose-800'}">
+                ${isEarn ? 'Suma Puntos (+)' : 'Canje Plato (-)'}
+              </span>
+            </td>
+            <td class="py-2.5 px-4 font-sans text-stone-300">
+              ${m.detail}
+              ${m.code ? `<span class="ml-1 text-amber-400 font-mono">(${m.code})</span>` : ''}
+            </td>
+            <td class="py-2.5 px-4 text-right font-bold font-mono ${isEarn ? 'text-emerald-400' : 'text-rose-400'}">
+              ${m.points > 0 ? '+' + m.points : m.points} PTS
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // NAVEGACIÓN ENTRE PESTAÑAS MAESTRAS
+    function switchAdminTab(t) {
+      ['canjes', 'clientes', 'auditoria'].forEach(tab => {
+        const c = document.getElementById(`content-adm-${tab}`);
+        const b = document.getElementById(`tab-adm-${tab}`);
+        if (c) c.classList.add('hidden');
+        if (b) {
+          b.classList.remove('text-amber-400', 'border-amber-500', 'font-black');
+          b.classList.add('text-stone-400', 'border-transparent', 'font-medium');
+        }
+      });
+
+      const activeContent = document.getElementById(`content-adm-${t}`);
+      const activeBtn = document.getElementById(`tab-adm-${t}`);
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.add('text-amber-400', 'border-amber-500', 'font-black');
+        activeBtn.classList.remove('text-stone-400', 'border-transparent', 'font-medium');
+      }
+    }
+
+    // MODALES Y OPERACIONES
     function toggleModal(id) {
       document.getElementById(id).classList.toggle('hidden');
     }
@@ -825,7 +1155,6 @@
       document.getElementById(id).classList.add('hidden');
     }
 
-    // 4. EDIT CLIENT
     function openEditModal(dni) {
       const db = getDB();
       const client = db[dni];
@@ -860,8 +1189,8 @@
       }
 
       const db = getDB();
-      const existingHistory = db[originalDni] ? db[originalDni].history : [];
-      const lastVisit = db[originalDni] ? db[originalDni].lastVisitDate : null;
+      const existingMovements = db[originalDni]?.movements || [];
+      const lastVisit = db[originalDni]?.lastVisitDate || null;
 
       if (originalDni !== newDni) {
         delete db[originalDni];
@@ -874,19 +1203,19 @@
         email: email,
         points: points,
         historicPoints: Math.max(points, (db[originalDni]?.historicPoints || 0)),
+        pointsSpent: db[originalDni]?.pointsSpent || 0,
         visits: visits,
         cycle: cycle,
         lastVisitDate: lastVisit,
-        history: existingHistory
+        movements: existingMovements
       };
 
       saveDB(db);
       closeModal('modalEditClient');
-      renderDashboard();
+      renderMasterData();
       alert('✅ Datos del cliente actualizados exitosamente.');
     }
 
-    // 5. NEW CLIENT MANUAL
     function openNewClientModal() {
       document.getElementById('newDni').value = '';
       document.getElementById('newName').value = '';
@@ -922,33 +1251,45 @@
         email: email,
         points: points,
         historicPoints: points,
+        pointsSpent: 0,
         visits: 1,
         cycle: 1,
         lastVisitDate: null,
-        history: [{ date: 'Hoy', amount: 0, pointsAdded: points, note: 'Alta en sistema Club Shimaya' }]
+        movements: [{
+          id: 'MOV-' + Date.now(),
+          date: new Date().toLocaleDateString('es-PE'),
+          type: 'EARN',
+          points: points,
+          title: 'Alta en Sistema',
+          detail: 'Registro por administración'
+        }]
       };
 
       saveDB(db);
       closeModal('modalNewClient');
-      renderDashboard();
+      renderMasterData();
       alert('✅ Cliente creado exitosamente.');
     }
 
-    // 6. QUICK ADJUST POINTS
     function quickAdjustPoints(dni, delta) {
       const db = getDB();
       if (!db[dni]) return;
 
       db[dni].points = Math.max(0, (db[dni].points || 0) + delta);
-      db[dni].history.unshift({
-        date: 'Hoy',
-        amount: 0,
-        pointsAdded: delta,
-        note: delta > 0 ? 'Ajuste rápido (+5 pts)' : 'Ajuste rápido (-5 pts)'
+      if (delta > 0) db[dni].historicPoints = (db[dni].historicPoints || 0) + delta;
+
+      if (!db[dni].movements) db[dni].movements = [];
+      db[dni].movements.unshift({
+        id: 'MOV-' + Date.now(),
+        date: new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }),
+        type: delta > 0 ? 'EARN' : 'SPEND',
+        points: delta,
+        title: delta > 0 ? 'Ajuste Rápido (+5 pts)' : 'Ajuste Rápido (-5 pts)',
+        detail: 'Ajuste manual directo desde tabla maestra'
       });
 
       saveDB(db);
-      renderDashboard();
+      renderMasterData();
     }
 
     function openAdjustModal(dni) {
@@ -979,20 +1320,25 @@
 
       const change = op === 'add' ? amt : -amt;
       client.points = Math.max(0, (client.points || 0) + change);
-      client.history.unshift({
-        date: 'Hoy (Auditoría)',
-        amount: 0,
-        pointsAdded: change,
-        note: `Ajuste: ${reason}`
+      if (change > 0) client.historicPoints = (client.historicPoints || 0) + change;
+      if (change < 0) client.pointsSpent = (client.pointsSpent || 0) + amt;
+
+      if (!client.movements) client.movements = [];
+      client.movements.unshift({
+        id: 'MOV-' + Date.now(),
+        date: new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }),
+        type: change > 0 ? 'EARN' : 'SPEND',
+        points: change,
+        title: 'Ajuste Auditado',
+        detail: reason
       });
 
       saveDB(db);
       closeModal('modalAdjustPoints');
-      renderDashboard();
+      renderMasterData();
       alert(`✅ Puntos ajustados: ${change > 0 ? '+' : ''}${change} pts a ${client.name}.`);
     }
 
-    // 7. DELETE CLIENT
     function deleteClient(dni) {
       const db = getDB();
       const client = db[dni];
@@ -1001,11 +1347,10 @@
       if (confirm(`¿Estás seguro de eliminar al cliente ${client.name} (DNI ${dni})? Esta acción no se puede deshacer.`)) {
         delete db[dni];
         saveDB(db);
-        renderDashboard();
+        renderMasterData();
       }
     }
 
-    // 8. POS SALE REGISTRATION
     function openPosModal() {
       document.getElementById('posDni').value = '';
       document.getElementById('posAmount').value = 65.00;
@@ -1040,10 +1385,12 @@
           phone: '',
           email: '',
           points: 0,
+          historicPoints: 0,
+          pointsSpent: 0,
           visits: 0,
           cycle: 1,
           lastVisitDate: null,
-          history: []
+          movements: []
         };
       }
 
@@ -1065,20 +1412,26 @@
       }
 
       user.points = (user.points || 0) + pts;
-      user.history.unshift({
-        date: 'Hoy',
-        amount: amt,
-        pointsAdded: pts,
-        note: `Boleta B001-${Math.floor(10000 + Math.random() * 90000)} • ${advanced ? 'Avanzó Estación #' + user.visits : 'Puntos sin avance de hito'}`
+      user.historicPoints = (user.historicPoints || 0) + pts;
+
+      if (!user.movements) user.movements = [];
+      user.movements.unshift({
+        id: 'MOV-' + Date.now(),
+        date: new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }),
+        type: 'EARN',
+        points: pts,
+        title: `Consumo Boleta B001-${Math.floor(10000 + Math.random() * 90000)}`,
+        detail: `Consumo de S/ ${amt.toFixed(2)} (6% Cashback)`,
+        stationAdvanced: advanced,
+        stationNum: user.visits
       });
 
       saveDB(db);
       closeModal('modalPosSale');
-      renderDashboard();
+      renderMasterData();
       alert(`✅ Boleta registrada con éxito:\n\n• DNI: ${dni}\n• Monto: S/ ${amt.toFixed(2)}\n• Puntos sumados: +${pts} Pts\n• Estación: #${user.visits}/10`);
     }
 
-    // 9. VOUCHER VALIDATOR
     function openVoucherValidatorModal() {
       document.getElementById('voucherCodeInput').value = '';
       document.getElementById('voucherValidationResult').classList.add('hidden');
@@ -1088,10 +1441,19 @@
     function validateVoucherCode() {
       const code = document.getElementById('voucherCodeInput').value.trim().toUpperCase();
       const resBox = document.getElementById('voucherValidationResult');
+      const redemptions = getRedemptions();
+      const item = redemptions.find(r => r.code === code);
 
-      if (!code || !code.startsWith('SHIMA-') || !code.endsWith('-OK')) {
+      if (!item) {
         resBox.className = 'p-3 rounded-xl border border-rose-600 bg-rose-950/60 text-xs text-rose-300';
-        resBox.innerHTML = '<strong>❌ Código Inválido:</strong> El formato debe ser tipo <code>SHIMA-XXXX-OK</code> generado por la app oficial.';
+        resBox.innerHTML = '<strong>❌ Código No Encontrado:</strong> Verifique los dígitos del cupón.';
+        resBox.classList.remove('hidden');
+        return;
+      }
+
+      if (item.status === 'CANJEADO') {
+        resBox.className = 'p-3 rounded-xl border border-amber-600 bg-amber-950/60 text-xs text-amber-300';
+        resBox.innerHTML = `<strong>⚠️ Ya Canjeado:</strong> Este cupón fue utilizado el ${item.redeemedAt || 'previamente'}.`;
         resBox.classList.remove('hidden');
         return;
       }
@@ -1099,10 +1461,10 @@
       resBox.className = 'p-3 rounded-xl border border-emerald-600 bg-emerald-950/60 text-xs text-emerald-300';
       resBox.innerHTML = `
         <div class="font-bold text-white mb-1">✅ ¡CUPÓN VÁLIDO PARA APLICAR EN MESA!</div>
-        <div>• Código: <span class="font-mono text-amber-300 font-bold">${code}</span></div>
-        <div>• Estado: <strong>DISPONIBLE</strong></div>
-        <div>• Validez: 24 horas desde su generación</div>
-        <button onclick="markVoucherRedeemed('${code}')" class="mt-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-[11px] transition">
+        <div>• Plato: <strong>${item.dish}</strong></div>
+        <div>• Cliente: ${item.clientName} (DNI ${item.dni})</div>
+        <div>• Puntos: ${item.points} pts</div>
+        <button onclick="markVoucherRedeemed('${item.code}')" class="mt-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg text-[11px] transition">
           Marcar como Canjeado en Caja
         </button>
       `;
@@ -1110,18 +1472,25 @@
     }
 
     function markVoucherRedeemed(code) {
-      alert(`✅ Cupón ${code} marcado como canjeado satisfactoriamente.`);
-      closeModal('modalVoucherValidator');
+      const redemptions = getRedemptions();
+      const item = redemptions.find(r => r.code === code);
+      if (item) {
+        item.status = 'CANJEADO';
+        item.redeemedAt = new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+        saveRedemptions(redemptions);
+        renderMasterData();
+        closeModal('modalVoucherValidator');
+        alert(`✅ Cupón ${code} marcado como CANJEADO con éxito.`);
+      }
     }
 
-    // 10. EXPORT CSV
     function exportClientsCsv() {
       const db = getDB();
       const clients = Object.values(db);
 
-      let csv = 'DNI,Nombre,Telefono,Email,Puntos_Disponibles,Hito_Actual,Ciclo_Nivel,Ultima_Visita\n';
+      let csv = 'DNI,Nombre,Telefono,Email,Puntos_Disponibles,Puntos_Historicos,Puntos_Gastados,Hito_Actual,Ciclo_Nivel,Ultima_Visita\n';
       clients.forEach(c => {
-        csv += `"${c.dni}","${c.name}","${c.phone || ''}","${c.email || ''}",${c.points || 0},${c.visits || 0},${c.cycle || 1},"${c.lastVisitDate || ''}"\n`;
+        csv += `"${c.dni}","${c.name}","${c.phone || ''}","${c.email || ''}",${c.points || 0},${c.historicPoints || 0},${c.pointsSpent || 0},${c.visits || 0},${c.cycle || 1},"${c.lastVisitDate || ''}"\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1134,7 +1503,6 @@
       document.body.removeChild(link);
     }
 
-    // 11. SUPABASE INTEGRATION
     function saveSupabaseSettings() {
       const url = document.getElementById('supabaseUrlInput').value.trim();
       const key = document.getElementById('supabaseAnonKeyInput').value.trim();
@@ -1145,10 +1513,9 @@
       alert('Configuración guardada.');
     }
 
-    // 12. INITIALIZATION
     document.addEventListener('DOMContentLoaded', () => {
       checkAdminSession();
-      renderDashboard();
+      renderMasterData();
     });
   </script>
 </body>
