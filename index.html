@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Supabase JS Client v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Real Clients Database from ID POS (Septiembre 2026) -->
+  <script src="clients_september.js"></script>
   <!-- QR Code Generator -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <!-- Google Fonts -->
@@ -144,7 +146,7 @@
               pattern="[0-9]*" 
               maxlength="8" 
               placeholder="Ingresa 8 dígitos" 
-              value="74829103"
+              value="74156527"
               onkeypress="handleDniKey(event)" 
               class="w-full bg-stone-950 border border-stone-700 focus:border-amber-500 text-white font-mono font-bold text-center text-lg px-4 py-3 rounded-xl focus:outline-none transition shadow-sm"
             >
@@ -160,12 +162,13 @@
         <!-- Quick Demo Profiles Pills -->
         <div class="mt-5 pt-4 border-t border-stone-800/80 max-w-sm mx-auto">
           <span class="text-[10px] text-stone-500 uppercase tracking-wider font-semibold block mb-2">
-            Perfiles de prueba en mesa:
+            Comensales reales de Septiembre (774 clientes cargados):
           </span>
           <div class="flex flex-wrap items-center justify-center gap-1.5">
-            <button onclick="quickSelectDni('74829103')" class="text-[10px] bg-stone-900 hover:bg-stone-800 text-amber-300 font-mono px-2.5 py-1 rounded-lg border border-stone-700">Marco Ramos (22 pts)</button>
-            <button onclick="quickSelectDni('45102938')" class="text-[10px] bg-stone-900 hover:bg-stone-800 text-stone-300 font-mono px-2.5 py-1 rounded-lg border border-stone-700">Lucía Mendoza (4 pts)</button>
-            <button onclick="quickSelectDni('74156527')" class="text-[10px] bg-stone-900 hover:bg-stone-800 text-emerald-300 font-mono px-2.5 py-1 rounded-lg border border-stone-700">Adrian Smith (35 pts)</button>
+            <button onclick="quickSelectDni('74156527')" class="text-[10px] bg-stone-900 hover:bg-stone-800 text-amber-300 font-mono px-2.5 py-1 rounded-lg border border-stone-700">Adrian Barranzuela (4 pts)</button>
+            <button onclick="quickSelectDni('42824660')" class="text-[10px] bg-stone-900 hover:bg-stone-800 text-emerald-300 font-mono px-2.5 py-1 rounded-lg border border-stone-700">Harol Santillana (57 pts)</button>
+            <button onclick="quickSelectDni('77438669')" class="text-[10px] bg-stone-900 hover:bg-stone-800 text-sky-300 font-mono px-2.5 py-1 rounded-lg border border-stone-700">Diego Cortijo (31 pts)</button>
+          </div>
           </div>
         </div>
 
@@ -209,7 +212,7 @@
                 <span id="clientBadge" class="bg-rose-950 text-rose-400 border border-rose-800/70 text-[9px] px-2 py-0.5 rounded-md font-extrabold uppercase">Socio Frecuente</span>
               </div>
               <p class="text-stone-400 text-xs mt-0.5">
-                DNI: <span id="clientDni" class="font-mono text-stone-200 font-bold">74829103</span> • <span id="clientCycleText">Ciclo 1 (Regular)</span>
+                DNI: <span id="clientDni" class="font-mono text-stone-200 font-bold">74156527</span> • <span id="clientCycleText">Ciclo 1 (Regular)</span>
               </p>
               <p class="text-xs text-amber-400 font-semibold mt-1">
                 <i class="fa-solid fa-fire text-rose-500 mr-1"></i> <span id="clientNextHype">¡A solo 1 visita de reclamar tu siguiente plato gratis!</span>
@@ -372,7 +375,7 @@
             
             <div class="text-right">
               <span class="text-xs font-mono text-stone-400 bg-stone-900 px-3 py-1 rounded-lg border border-stone-800">
-                DNI: <strong class="text-white" id="movementUserDni">74829103</strong>
+                DNI: <strong class="text-white" id="movementUserDni">74156527</strong>
               </span>
             </div>
           </div>
@@ -677,14 +680,30 @@
     };
 
     function getClientsDB() {
+      const DB_VERSION_KEY = 'shimaya_db_version';
+      const CURRENT_VERSION = '2026-09-idpos-v2';
+      const storedVersion = localStorage.getItem(DB_VERSION_KEY);
+
+      if (storedVersion !== CURRENT_VERSION || !localStorage.getItem(STORAGE_KEY)) {
+        const base = (typeof window.SEPTEMBER_CLIENTS_DATA !== 'undefined' && Object.keys(window.SEPTEMBER_CLIENTS_DATA).length > 0)
+          ? window.SEPTEMBER_CLIENTS_DATA 
+          : DEFAULT_CLIENTS;
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(base));
+          localStorage.setItem(DB_VERSION_KEY, CURRENT_VERSION);
+        } catch (e) {
+          console.warn('LocalStorage save error:', e);
+        }
+        return base;
+      }
+
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) return JSON.parse(stored);
       } catch (e) {
         console.warn('Error reading clients db:', e);
       }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_CLIENTS));
-      return DEFAULT_CLIENTS;
+      return (typeof window.SEPTEMBER_CLIENTS_DATA !== 'undefined') ? window.SEPTEMBER_CLIENTS_DATA : DEFAULT_CLIENTS;
     }
 
     function saveClientsDB(db) {
@@ -812,6 +831,16 @@
 
     function renderClientDashboard() {
       if (!activeClient) return;
+
+      // Reconciliación matemática estricta e inviolable: Saldo = Ganados - Gastados
+      const movements = activeClient.movements || [];
+      const earned = movements.filter(m => m.points > 0).reduce((acc, m) => acc + m.points, 0);
+      const spent = movements.filter(m => m.points < 0).reduce((acc, m) => acc + Math.abs(m.points), 0);
+      const available = Math.max(0, earned - spent);
+
+      activeClient.points = available;
+      activeClient.historicPoints = earned;
+      activeClient.pointsSpent = spent;
 
       document.getElementById('clientName').textContent = activeClient.name;
       document.getElementById('clientDni').textContent = activeClient.dni;
@@ -1072,13 +1101,19 @@
       const movements = activeClient.movements || [];
       const container = document.getElementById('movementsTimelineContainer');
 
-      // Calcular totales
+      // Calcular totales con exactitud matemática estricta: Saldo = Ganados - Gastados
       const earned = movements.filter(m => m.points > 0).reduce((acc, m) => acc + m.points, 0);
       const spent = movements.filter(m => m.points < 0).reduce((acc, m) => acc + Math.abs(m.points), 0);
+      const available = Math.max(0, earned - spent);
 
-      document.getElementById('movStatAvailable').textContent = `${activeClient.points} pts`;
-      document.getElementById('movStatEarned').textContent = `+${earned || activeClient.historicPoints || 0} pts`;
-      document.getElementById('movStatSpent').textContent = `-${spent || activeClient.pointsSpent || 0} pts`;
+      // Sincronizar en el cliente activo
+      activeClient.points = available;
+      activeClient.historicPoints = earned;
+      activeClient.pointsSpent = spent;
+
+      document.getElementById('movStatAvailable').textContent = `${available} pts`;
+      document.getElementById('movStatEarned').textContent = `+${earned} pts`;
+      document.getElementById('movStatSpent').textContent = `-${spent} pts`;
       document.getElementById('movStatVisits').textContent = `${activeClient.visits} Visitas`;
 
       let filtered = movements;
