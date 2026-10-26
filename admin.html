@@ -115,9 +115,10 @@
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
           <span class="hidden md:inline">Ver Portal</span> Cliente
         </a>
-        <button onclick="toggleModal('modalSupabase')" class="text-xs bg-stone-800 hover:bg-stone-700 text-sky-300 border border-stone-700 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-database text-sky-400"></i>
-          <span class="hidden sm:inline">Supabase</span>
+        <button onclick="toggleModal('modalSupabase')" class="text-xs bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/80 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition shadow">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <i class="fa-solid fa-cloud text-emerald-400"></i>
+          <span>Supabase Conectado</span>
         </button>
         <button onclick="adminLogout()" class="text-xs bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-white border border-stone-800 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
           <i class="fa-solid fa-right-from-bracket"></i>
@@ -704,7 +705,7 @@
 
         <div>
           <label class="text-[11px] text-stone-300 font-semibold block mb-1">Anon Key (Clave Pública de Supabase):</label>
-          <input type="password" id="supabaseAnonKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white font-mono text-[11px] focus:outline-none">
+          <input type="password" id="supabaseAnonKeyInput" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndteXh6dmxmaHhod3dmd3RxZ3FlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNTc1NjMsImV4cCI6MjEwNzgzMzU2M30.zI7hF2YNJ6PKWhi5DNREng6LYp4BBPpfN-Y8uymVK1A" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white font-mono text-[11px] focus:outline-none">
         </div>
 
         <div id="supabaseSyncStatus" class="hidden text-[11px] text-amber-400 font-mono py-1"></div>
@@ -738,6 +739,13 @@
     const STORAGE_KEY = 'shimaya_clients_db';
     const REDEMPTIONS_KEY = 'shimaya_redemptions_db';
     const MASTER_PIN = '74156527';
+
+    // SUPABASE NUBE CONECTADO OFICIAL
+    const SUPABASE_URL = 'https://wmyxzvlfhxhwwfwtqgqe.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndteXh6dmxmaHhod3dmd3RxZ3FlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNTc1NjMsImV4cCI6MjEwNzgzMzU2M30.zI7hF2YNJ6PKWhi5DNREng6LYp4BBPpfN-Y8uymVK1A';
+    const supabaseClient = (typeof supabase !== 'undefined' && supabase.createClient) 
+      ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+      : null;
 
     const DEFAULT_REDEMPTIONS = [];
 

@@ -534,6 +534,13 @@
     const STORAGE_KEY = 'shimaya_clients_db';
     const REDEMPTIONS_KEY = 'shimaya_redemptions_db';
 
+    // SUPABASE NUBE CONECTADO OFICIAL
+    const SUPABASE_URL = 'https://wmyxzvlfhxhwwfwtqgqe.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndteXh6dmxmaHhod3dmd3RxZ3FlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIyNTc1NjMsImV4cCI6MjEwNzgzMzU2M30.zI7hF2YNJ6PKWhi5DNREng6LYp4BBPpfN-Y8uymVK1A';
+    const supabaseClient = (typeof supabase !== 'undefined' && supabase.createClient) 
+      ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+      : null;
+
     const DEFAULT_CLIENTS = {
       '74829103': {
         name: 'Marco Ramos',
@@ -809,6 +816,44 @@
 
       activeClient = db[dni];
       openClientDashboard();
+
+      // Sincronización en vivo con Supabase en la nube
+      if (supabaseClient) {
+        supabaseClient.from('clientes_fidelidad').select('*').eq('dni', dni).single().then(async ({ data: liveClient, error }) => {
+          if (liveClient && !error) {
+            activeClient.name = liveClient.nombre || activeClient.name;
+            activeClient.points = liveClient.puntos_disponibles;
+            activeClient.historicPoints = liveClient.puntos_historicos;
+            activeClient.visits = liveClient.hito_actual;
+            activeClient.cycle = liveClient.nivel_ciclo || 1;
+
+            const { data: liveBoletas } = await supabaseClient
+              .from('registro_visitas_boletas')
+              .select('*')
+              .eq('dni', dni)
+              .order('fecha_hora', { ascending: false });
+
+            if (liveBoletas && liveBoletas.length > 0) {
+              activeClient.movements = liveBoletas.map(b => ({
+                id: 'MOV-' + b.comprobante_id,
+                date: new Date(b.fecha_hora).toLocaleDateString('es-PE'),
+                type: 'EARN',
+                points: b.puntos_generados,
+                title: 'Consumo Boleta ' + b.comprobante_id,
+                detail: `Consumo S/ ${Number(b.monto_total).toFixed(2)} (Sincronizado Supabase)`,
+                amount: Number(b.monto_total),
+                stationAdvanced: b.avanzo_hito,
+                stationNum: activeClient.visits
+              }));
+            }
+
+            renderClientDashboard();
+            const currentDb = getClientsDB();
+            currentDb[dni] = activeClient;
+            saveClientsDB(currentDb);
+          }
+        }).catch(e => console.warn('Supabase sync notice:', e));
+      }
     }
 
     function openClientDashboard() {
@@ -1044,6 +1089,28 @@
           redeemedAt: null
         });
         localStorage.setItem(REDEMPTIONS_KEY, JSON.stringify(redemptions));
+
+        // Guardar en Supabase Nube
+        if (supabaseClient) {
+          supabaseClient.from('recompensas_cliente').insert({
+            codigo_cupon: randomCode,
+            dni: activeClient.dni,
+            tipo_origen: 'TIENDA',
+            descripcion_premio: name,
+            puntos_deducidos: pts,
+            estado: 'DISPONIBLE'
+          }).then(({ error }) => {
+            if (error) console.warn('Supabase voucher insert error:', error);
+            else console.log('✅ Cupón guardado en Supabase en tiempo real.');
+          });
+
+          // Actualizar saldo de puntos en Supabase
+          supabaseClient.from('clientes_fidelidad').update({
+            puntos_disponibles: activeClient.points
+          }).eq('dni', activeClient.dni).then(({ error }) => {
+            if (error) console.warn('Supabase points update error:', error);
+          });
+        }
       } catch (e) {
         console.warn('Error saving global redemption:', e);
       }
