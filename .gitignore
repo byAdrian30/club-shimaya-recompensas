@@ -3,3 +3,5 @@ scratch/
 .env*
 .DS_Store
 Thumbs.db
+
+.vercel
