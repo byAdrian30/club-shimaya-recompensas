@@ -703,17 +703,31 @@
         </div>
 
         <div>
-          <label class="text-[11px] text-stone-300 font-semibold block mb-1">Anon Key:</label>
+          <label class="text-[11px] text-stone-300 font-semibold block mb-1">Anon Key (Clave Pública de Supabase):</label>
           <input type="password" id="supabaseAnonKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-stone-900 border border-stone-700 rounded-xl px-3 py-2 text-white font-mono text-[11px] focus:outline-none">
         </div>
 
-        <div class="flex gap-2 pt-1">
-          <button onclick="saveSupabaseSettings()" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2 rounded-xl text-xs">
-            Guardar Configuración
+        <div id="supabaseSyncStatus" class="hidden text-[11px] text-amber-400 font-mono py-1"></div>
+
+        <div class="flex flex-col sm:flex-row gap-2 pt-1">
+          <button onclick="syncToSupabaseCloud()" class="flex-1 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Clientes a Supabase
           </button>
-          <a href="schema_club_shimaya.sql" download class="px-3 bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 rounded-xl flex items-center gap-1 font-bold">
-            <i class="fa-solid fa-download"></i> SQL
-          </a>
+          <button onclick="saveSupabaseSettings()" class="bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 font-bold px-3 py-2.5 rounded-xl text-xs transition">
+            Guardar Clave
+          </button>
+        </div>
+
+        <div class="border-t border-stone-800 pt-3 mt-2">
+          <span class="text-[10px] text-stone-400 block mb-2 font-bold uppercase tracking-wider">Scripts SQL para el Editor de Supabase:</span>
+          <div class="grid grid-cols-2 gap-2">
+            <a href="schema_club_shimaya.sql" download class="p-2 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 font-bold text-center text-[10px] block transition">
+              <i class="fa-solid fa-table mr-1 text-sky-400"></i> 1. Estructura y Reglas
+            </a>
+            <a href="seed_septiembre_supabase.sql" download class="p-2 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-300 font-bold text-center text-[10px] block transition">
+              <i class="fa-solid fa-file-import mr-1 text-emerald-400"></i> 2. Carga 774 Clientes
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -1524,6 +1538,61 @@
       if (key) localStorage.setItem('shimaya_supabase_anon_key', key);
       closeModal('modalSupabase');
       alert('Configuración guardada.');
+    }
+
+    async function syncToSupabaseCloud() {
+      const url = (document.getElementById('supabaseUrlInput').value || '').trim();
+      const key = (document.getElementById('supabaseAnonKeyInput').value || '').trim();
+
+      if (!url || !key) {
+        alert('Por favor ingresa la Project URL y la Anon Key de Supabase.');
+        return;
+      }
+
+      const statusEl = document.getElementById('supabaseSyncStatus');
+      statusEl.classList.remove('hidden');
+      statusEl.className = 'text-[11px] text-amber-400 font-mono py-1';
+      statusEl.textContent = 'Conectando a Supabase...';
+
+      try {
+        if (typeof supabase === 'undefined' || !supabase.createClient) {
+          throw new Error('Librería de Supabase no cargada.');
+        }
+
+        const client = supabase.createClient(url, key);
+        const db = getDB();
+        const clients = Object.values(db);
+
+        statusEl.textContent = `Preparando ${clients.length} clientes para sincronizar...`;
+
+        const payload = clients.map(c => ({
+          dni: c.dni,
+          nombre: c.name,
+          telefono: c.phone || null,
+          puntos_disponibles: c.points || 0,
+          puntos_historicos: c.historicPoints || 0,
+          hito_actual: c.visits || 0,
+          nivel_ciclo: c.cycle || 1,
+          fecha_ultima_visita: c.lastVisitDate ? c.lastVisitDate.split('/').reverse().join('-') : null
+        }));
+
+        // Batch upload en bloques de 100
+        for (let i = 0; i < payload.length; i += 100) {
+          const batch = payload.slice(i, i + 100);
+          const { error } = await client.from('clientes_fidelidad').upsert(batch, { onConflict: 'dni' });
+          if (error) throw error;
+          statusEl.textContent = `Sincronizados ${Math.min(i + 100, payload.length)} de ${payload.length} clientes...`;
+        }
+
+        statusEl.className = 'text-[11px] text-emerald-400 font-bold py-1';
+        statusEl.textContent = `✅ ¡Éxito! 774 clientes sincronizados en clientes_fidelidad de Supabase.`;
+        localStorage.setItem('shimaya_supabase_url', url);
+        localStorage.setItem('shimaya_supabase_anon_key', key);
+      } catch (err) {
+        console.error('Error sincronizando con Supabase:', err);
+        statusEl.className = 'text-[11px] text-rose-400 font-bold py-1';
+        statusEl.textContent = `❌ Error: ${err.message || 'Verifica la Anon Key y que las tablas estén creadas en Supabase'}`;
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
